@@ -127,43 +127,41 @@
   <button id="backToTop" title="Back to Top">↑</button>
 
   <script>
-    // ✅ আপনার আসল EmailJS Keys
+    // ✅✅✅ আপনার ফাইনাল EmailJS Keys ✅✅✅
     emailjs.init('4McRUK1Y1iGOjnHZb');
 
     document.getElementById('contact-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const btnText = document.getElementById('btn-text');
-      const btnLoading = document.getElementById('btn-loading');
-      const submitBtn = document.getElementById('submit-btn');
-      const msgEl = document.getElementById('form-message');
+      var btnText = document.getElementById('btn-text');
+      var btnLoading = document.getElementById('btn-loading');
+      var submitBtn = document.getElementById('submit-btn');
+      var msgEl = document.getElementById('form-message');
 
       btnText.classList.add('hidden');
       btnLoading.classList.remove('hidden');
       submitBtn.disabled = true;
       submitBtn.style.opacity = '0.7';
 
-      const templateParams = {
+      var params = {
         from_name: document.getElementById('from_name').value,
         from_email: document.getElementById('from_email').value,
-        message: document.getElementById('message').value,
+        message: document.getElementById('message').value
       };
 
-      emailjs.send('service_yxr19bt', 'template_zppt6vk', templateParams)
+      emailjs.send('service_244m0pm', 'template_v0lw5j9', params)
         .then(function(response) {
-          console.log('SUCCESS!', response.status);
           msgEl.innerHTML = '<div class="flex items-center justify-center gap-2"><span class="text-2xl">✅</span><div><strong>জাযাকাল্লাহু খাইরান!</strong><br>আপনার মেসেজ সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করবো ইনশাআল্লাহ।</div></div>';
           msgEl.className = 'mt-4 text-center text-sm font-medium text-green-700 bg-green-50 p-4 rounded-lg border border-green-200';
           msgEl.classList.remove('hidden');
           document.getElementById('contact-form').reset();
-          setTimeout(() => msgEl.classList.add('hidden'), 8000);
+          setTimeout(function() { msgEl.classList.add('hidden'); }, 8000);
         })
         .catch(function(error) {
-          console.log('FAILED...', error);
           msgEl.innerHTML = '<div class="flex items-center justify-center gap-2"><span class="text-2xl">❌</span><div><strong>দুঃখিত!</strong> মেসেজ পাঠাতে সমস্যা হয়েছে।<br>সরাসরি ইমেইল করুন: <a href="mailto:gscicc26@gmail.com" class="text-blue-600 underline">gscicc26@gmail.com</a></div></div>';
           msgEl.className = 'mt-4 text-center text-sm font-medium text-red-700 bg-red-50 p-4 rounded-lg border border-red-200';
           msgEl.classList.remove('hidden');
-          setTimeout(() => msgEl.classList.add('hidden'), 8000);
+          setTimeout(function() { msgEl.classList.add('hidden'); }, 8000);
         })
         .finally(function() {
           btnText.classList.remove('hidden');
@@ -174,26 +172,28 @@
     });
 
     // Dark Mode
-    const darkToggle = document.getElementById('darkToggle');
+    var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') {
       document.body.classList.add('dark-mode');
       darkToggle.textContent = '☀️';
     }
-    darkToggle.addEventListener('click', () => {
+    darkToggle.addEventListener('click', function() {
       document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
       darkToggle.textContent = isDark ? '☀️' : '🌙';
       localStorage.setItem('darkMode', isDark);
     });
 
     // Back to top
-    const btn = document.getElementById('backToTop');
-    window.addEventListener('scroll', () => {
-      btn.style.opacity = window.scrollY > 200 ? '1' : '0';
-      btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden';
+    var backBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+      backBtn.style.opacity = window.scrollY > 200 ? '1' : '0';
+      backBtn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden';
     });
-    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.querySelectorAll('nav a').forEach(l => {
+    backBtn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+    // Active nav
+    document.querySelectorAll('nav a').forEach(function(l) {
       if (l.href === window.location.href) l.classList.add('active-page');
     });
   </script>
