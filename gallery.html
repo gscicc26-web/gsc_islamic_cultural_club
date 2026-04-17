@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="h-full smooth-scroll bg-gray-50">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-wrap justify-center items-center gap-4">
+        <a href="index.html"        class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
+        <a href="about.html"        class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
+        <a href="activities.html"   class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
+        <a href="committee.html"    class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Committee</a>
+        <a href="founders.html"     class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Founders</a>
+        <a href="gallery.html"      class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
+        <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
+        <a href="contact.html"      class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="gradient-bg islamic-pattern py-12 text-center text-white">
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">ইভেন্ট গ্যালারি</h1>
+    <p class="opacity-80">আমাদের স্মরণীয় মুহূর্তগুলো</p>
+  </div>
+
+  <!-- Gallery Slider -->
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold text-green-800 mb-8">ইভেন্ট গ্যালারি</h2>
+
+      <div class="relative overflow-hidden rounded-2xl shadow-2xl group border-4 border-green-700">
+        <div id="slider" class="flex transition-transform duration-700 ease-in-out">
+
+          <div class="min-w-full relative">
+            <img src="Event1.jpg" class="w-full h-64 md:h-96 object-cover" alt="Event 1">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-4">ইভেন্ট ১</div>
+          </div>
+
+          <div class="min-w-full relative">
+            <img src="Event2.jpg" class="w-full h-64 md:h-96 object-cover" alt="Event 2">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-4">ইভেন্ট ২</div>
+          </div>
+
+          <div class="min-w-full relative">
+            <img src="Event3.jpg" class="w-full h-64 md:h-96 object-cover" alt="Event 3">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-4">ইভেন্ট ৩</div>
+          </div>
+
+          <div class="min-w-full relative">
+            <img src="Event4.jpg" class="w-full h-64 md:h-96 object-cover" alt="Event 4">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-4">ইভেন্ট ৪</div>
+          </div>
+
+          <div class="min-w-full relative">
+            <img src="Event5.jpg" class="w-full h-64 md:h-96 object-cover" alt="Event 5">
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-4">ইভেন্ট ৫</div>
+          </div>
+
+        </div>
+
+        <button onclick="moveSlider(-1)"
+                class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70
+                       text-white p-2 rounded-full transition-all">❮</button>
+        <button onclick="moveSlider(1)"
+                class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70
+                       text-white p-2 rounded-full transition-all">❯</button>
+      </div>
+
+      <!-- Dot Indicators -->
+      <div class="flex justify-center gap-2 mt-4" id="dots"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, ঢাকা।</p>
+      <hr class="border-gray-700 mb-6">
+      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
+    </div>
+  </footer>
+
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <script>
+    // Slider
+    let currentSlide = 0;
+    const totalSlides = 5;
+    const slider = document.getElementById('slider');
+    const dotsContainer = document.getElementById('dots');
+
+    // Create dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'w-3 h-3 rounded-full bg-gray-400 transition-all';
+      dot.onclick = () => { currentSlide = i; updateSlider(); };
+      dotsContainer.appendChild(dot);
+    }
+
+    function updateSlider() {
+      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+      document.querySelectorAll('#dots button').forEach((d, i) => {
+        d.className = i === currentSlide
+          ? 'w-3 h-3 rounded-full bg-green-700 transition-all'
+          : 'w-3 h-3 rounded-full bg-gray-400 transition-all';
+      });
+    }
+
+    function moveSlider(direction) {
+      currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+      updateSlider();
+    }
+
+    updateSlider();
+    setInterval(() => moveSlider(1), 4000);
+
+    // Back to top
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      btn.style.opacity = window.scrollY > 200 ? '1' : '0';
+      btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden';
+    });
+    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    document.querySelectorAll('nav a').forEach(l => {
+      if (l.href === window.location.href) l.classList.add('active-page');
+    });
+  </script>
+</body>
+</html>
