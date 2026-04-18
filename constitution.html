@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSCICC | Constitution</title>
+  <title>GSCICC | Contact</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body class="h-full smooth-scroll bg-white">
+<body class="h-full smooth-scroll bg-gray-50">
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
@@ -23,63 +24,49 @@
         <a href="gallery.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
         <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
         <a href="contact.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
+        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
+        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
       </div>
     </div>
   </nav>
 
   <div class="gradient-bg islamic-pattern py-12 text-center text-white">
-    <h1 class="text-4xl font-bold text-yellow-400 mb-2">Our Constitution</h1>
-    <p class="opacity-80">ক্লাবের গঠনতন্ত্র ও মূলনীতি</p>
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">Get in Touch</h1>
+    <p class="opacity-80">আমাদের সাথে যোগাযোগ করুন</p>
   </div>
 
-  <section class="py-20 bg-white">
+  <section class="py-20 bg-gray-50">
     <div class="max-w-4xl mx-auto px-6">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Our Constitution</h2>
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Get in Touch</h2>
       <div class="section-divider"></div>
-
-      <div class="bg-green-50 rounded-xl p-8 shadow-md">
-        <h3 class="text-2xl font-bold text-green-800 mb-6">Core Principles</h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl">✦</span>
-            <p class="text-gray-700"><strong>নাম:</strong> সংগঠনের নাম হবে "Govt. Science College Islamic Cultural Club (GSCICC)"</p>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📍</div><div><h4 class="font-semibold text-gray-800">Address</h4><p class="text-gray-600 text-sm">Government Science College<br>Tejgaon, Dhaka-1215</p></div></div>
+            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📧</div><div><h4 class="font-semibold text-gray-800">Email</h4><p class="text-gray-600 text-sm">gscicc26@gmail.com</p></div></div>
+            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📱</div><div><h4 class="font-semibold text-gray-800">Phone</h4><p class="text-gray-600 text-sm">+880 1932391139</p></div></div>
+            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">🌐</div><div><h4 class="font-semibold text-gray-800">Social Media</h4>
+              <div class="flex gap-5 mt-4">
+                <a href="https://www.facebook.com/share/1Euq3pjgf3/" target="_blank" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="35" height="35" alt="Facebook"></a>
+                <a href="https://m.me/samin987" target="_blank" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968771.png" width="35" height="35" alt="Messenger"></a>
+                <a href="mailto:gscicc26@gmail.com" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="35" height="35" alt="Email"></a>
+              </div>
+            </div></div>
           </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl">✦</span>
-            <p class="text-gray-700"><strong>উদ্দেশ্য:</strong> সরকারি বিজ্ঞান কলেজের শিক্ষার্থীদের মাঝে ইসলামী আদর্শ, নৈতিকতা ও সংস্কৃতি চর্চা করা এবং দ্বীনি চেতনা জাগ্রত করা।</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl">✦</span>
-            <p class="text-gray-700"><strong>কার্যক্রম:</strong> কুরআন অধ্যয়ন, ইসলামী আলোচনা, দাওয়াহ কার্যক্রম, সামাজিক সেবা ও সাংস্কৃতিক প্রোগ্রাম আয়োজন।</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl">✦</span>
-            <p class="text-gray-700"><strong>সদস্যপদ:</strong> সরকারি বিজ্ঞান কলেজের সকল মুসলিম শিক্ষার্থী এই ক্লাবের সদস্য হতে পারবে।</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl">✦</span>
-            <p class="text-gray-700"><strong>নিয়মনীতি:</strong> ক্লাবের সকল কার্যক্রম কলেজ প্রশাসনের নিয়মনীতি ও ইসলামী শরীয়াহ অনুসারে পরিচালিত হবে।</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl flex-shrink-0">✦</span>
-            <p class="text-gray-700"><strong>Mission:</strong> To promote Islamic values, knowledge, and brotherhood among students</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl flex-shrink-0">✦</span>
-            <p class="text-gray-700"><strong>Vision:</strong> Building a generation of knowledgeable, practicing Muslims</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl flex-shrink-0">✦</span>
-            <p class="text-gray-700"><strong>Values:</strong> Integrity, knowledge, compassion, unity, and service</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl flex-shrink-0">✦</span>
-            <p class="text-gray-700"><strong>Membership:</strong> Open to all students of Govt. Science College</p>
-          </div>
-          <div class="flex items-start gap-3">
-            <span class="text-yellow-600 text-xl flex-shrink-0">✦</span>
-            <p class="text-gray-700"><strong>Activities:</strong> Educational, cultural, and social welfare programs</p>
-          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h3>
+          <form class="contact-form space-y-4" id="contact-form">
+            <div><input type="text" id="from_name" name="from_name" placeholder="আপনার নাম / Your Name" required></div>
+            <div><input type="email" id="from_email" name="from_email" placeholder="আপনার ইমেইল / Your Email" required></div>
+            <div><textarea id="message" name="message" rows="4" placeholder="আপনার মেসেজ / Your Message" required></textarea></div>
+            <button type="submit" id="submit-btn" class="w-full bg-green-800 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md flex items-center justify-center gap-2">
+              <span id="btn-text">📩 Send Message</span>
+              <span id="btn-loading" class="hidden flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>পাঠানো হচ্ছে...</span>
+            </button>
+          </form>
+          <div id="form-message" class="mt-4 text-center text-sm font-medium hidden"></div>
         </div>
       </div>
     </div>
@@ -97,27 +84,25 @@
   <button id="backToTop" title="Back to Top">↑</button>
 
   <script>
-    const darkToggle = document.getElementById('darkToggle');
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.body.classList.add('dark-mode');
-      darkToggle.textContent = '☀️';
-    }
-    darkToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
-      darkToggle.textContent = isDark ? '☀️' : '🌙';
-      localStorage.setItem('darkMode', isDark);
+    emailjs.init('4McRUK1Y1iGOjnHZb');
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btnText=document.getElementById('btn-text'),btnLoading=document.getElementById('btn-loading'),submitBtn=document.getElementById('submit-btn'),msgEl=document.getElementById('form-message');
+      btnText.classList.add('hidden');btnLoading.classList.remove('hidden');submitBtn.disabled=true;submitBtn.style.opacity='0.7';
+      var params={from_name:document.getElementById('from_name').value,from_email:document.getElementById('from_email').value,message:document.getElementById('message').value};
+      emailjs.send('service_244m0pm','template_v0lw5j9',params)
+        .then(function(r){msgEl.innerHTML='<div class="flex items-center justify-center gap-2"><span class="text-2xl">✅</span><div><strong>জাযাকাল্লাহু খাইরান!</strong><br>আপনার মেসেজ সফলভাবে পাঠানো হয়েছে।</div></div>';msgEl.className='mt-4 text-center text-sm font-medium text-green-700 bg-green-50 p-4 rounded-lg border border-green-200';msgEl.classList.remove('hidden');document.getElementById('contact-form').reset();setTimeout(function(){msgEl.classList.add('hidden');},8000);})
+        .catch(function(e){msgEl.innerHTML='<div class="flex items-center justify-center gap-2"><span class="text-2xl">❌</span><div><strong>দুঃখিত!</strong> সরাসরি ইমেইল করুন: <a href="mailto:gscicc26@gmail.com" class="text-blue-600 underline">gscicc26@gmail.com</a></div></div>';msgEl.className='mt-4 text-center text-sm font-medium text-red-700 bg-red-50 p-4 rounded-lg border border-red-200';msgEl.classList.remove('hidden');setTimeout(function(){msgEl.classList.add('hidden');},8000);})
+        .finally(function(){btnText.classList.remove('hidden');btnLoading.classList.add('hidden');submitBtn.disabled=false;submitBtn.style.opacity='1';});
     });
 
-    const btn = document.getElementById('backToTop');
-    window.addEventListener('scroll', () => {
-      btn.style.opacity = window.scrollY > 200 ? '1' : '0';
-      btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden';
-    });
-    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.querySelectorAll('nav a').forEach(l => {
-      if (l.href === window.location.href) l.classList.add('active-page');
-    });
+    var darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
+    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() { btn.style.opacity = window.scrollY > 200 ? '1' : '0'; btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden'; });
+    btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
 </body>
 </html>
