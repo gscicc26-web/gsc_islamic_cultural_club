@@ -7,6 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="h-full smooth-scroll bg-white">
 
@@ -17,16 +20,15 @@
       <div class="flex flex-wrap justify-center items-center gap-4">
         <a href="index.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
         <a href="about.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
+        <a href="notices.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Notices</a>
+        <a href="events.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Events</a>
+        <a href="news.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">News</a>
         <a href="activities.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
         <a href="committee.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Committee</a>
-        <a href="founders.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Founders</a>
         <a href="gallery.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
-        <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
         <a href="contact.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
-        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
-        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
-        <a href="admin.html" class="text-red-400 hover:text-white font-medium text-sm px-3 py-1">Admin</a>
-        
+        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
+        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
       </div>
     </div>
   </nav>
@@ -35,47 +37,8 @@
     <div class="max-w-7xl mx-auto px-6 flex items-center">
       <span class="bg-red-600 text-white px-3 py-1 rounded-md text-sm font-bold mr-4 animate-pulse">NOTICE</span>
       <marquee class="text-gray-800 font-medium" behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
-        📢 স্বাগতম আমাদের অফিসিয়াল ওয়েবসাইটে। বর্তমানে আমাদের সদস্য আবেদন প্রক্রিয়া বন্ধ আছে। কেউ সদস্য ফরম পূরণ করবেন না। 
+        📢 স্বাগতম আমাদের ক্লাবে
       </marquee>
-          <!-- ============================================ -->
-    <!-- 🎯 SPECIAL BANNER - Skill Assessment 2026    -->
-    <!-- ⚠️ ৭ দিন পর মুছতে চাইলে এই পুরো <section>   -->
-    <!--    থেকে </section> পর্যন্ত মুছে দিন         -->
-    <!-- ============================================ -->
-    <section id="special-banner" class="py-6 bg-gradient-to-r from-green-900 to-green-800">
-      <div class="max-w-5xl mx-auto px-4">
-        <a href="https://forms.gle/cMtaCqH5MaCPB9WL9" target="_blank" 
-           class="block relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-all duration-300 group cursor-pointer">
-          
-          <!-- Banner Image -->
-          <img src="banner.jpg" 
-               alt="Executive Panel Skill Assessment 2026" 
-               class="w-full h-auto">
-          
-          <!-- Overlay on hover -->
-          <div class="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-          
-          <!-- Click to Apply Badge -->
-          <div class="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
-            👆 ক্লিক করুন
-          </div>
-        </a>
-        
-        <!-- Info Bar -->
-        <div class="mt-3 bg-yellow-400 rounded-lg p-3 text-center">
-          <p class="text-green-900 font-bold text-sm md:text-base">
-            🎯 আজই আবেদন করুন! 
-            <a href="https://forms.gle/cMtaCqH5MaCPB9WL9" target="_blank" 
-               class="underline hover:text-red-600">
-              ফর্ম পূরণ করুন →
-            </a>
-          </p>
-        </div>
-      </div>
-    </section>
-    <!-- ============================================ -->
-    <!-- 🎯 END OF SPECIAL BANNER                     -->
-    <!-- ============================================ -->
     </div>
   </div>
 
@@ -90,12 +53,73 @@
       <p class="text-lg md:text-xl mb-6 opacity-90">সরকারি বিজ্ঞান কলেজের একটি আদর্শভিত্তিক ইসলামিক ছাত্র সংগঠন</p>
       <div class="text-xl md:text-2xl italic font-semibold text-yellow-300">Knowledge · Faith · Culture</div>
       <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <a href="about.html" class="bg-yellow-400 text-green-900 font-bold px-6 py-3 rounded-xl hover:bg-yellow-300 transition-all shadow-lg">আমাদের সম্পর্কে জানুন</a>
-        <a href="signup.html" class="border-2 border-yellow-400 text-yellow-400 font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 hover:text-green-900 transition-all">📝 সদস্য হোন</a>
+        <a href="about.html" class="bg-yellow-400 text-green-900 font-bold px-6 py-3 rounded-xl hover:bg-yellow-300 shadow-lg">আমাদের সম্পর্কে জানুন</a>
+        <a href="signup.html" class="border-2 border-yellow-400 text-yellow-400 font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 hover:text-green-900">📝 সদস্য হোন</a>
       </div>
     </div>
   </header>
 
+  <!-- ============================================ -->
+  <!-- 📢 LATEST NOTICES SECTION -->
+  <!-- ============================================ -->
+  <section class="py-16 bg-yellow-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-yellow-600 font-bold text-sm uppercase tracking-wider">সাম্প্রতিক</span>
+        <h2 class="text-4xl font-bold text-gray-800 mt-2">📢 নোটিশ বোর্ড</h2>
+        <div class="section-divider mt-3"></div>
+      </div>
+
+      <div id="notices-loading" class="text-center py-8">
+        <div class="animate-spin h-10 w-10 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+        <p class="text-gray-500 mt-3">লোড হচ্ছে...</p>
+      </div>
+
+      <div id="notices-container" class="grid md:grid-cols-3 gap-4 hidden"></div>
+
+      <div id="notices-empty" class="hidden text-center py-8">
+        <div class="text-5xl mb-3">📭</div>
+        <p class="text-gray-500">এখনো কোনো নোটিশ নেই</p>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="notices.html" class="inline-block bg-yellow-500 text-white font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-all">সব নোটিশ দেখুন →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- 📅 UPCOMING EVENTS SECTION -->
+  <!-- ============================================ -->
+  <section class="py-16 bg-green-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-green-700 font-bold text-sm uppercase tracking-wider">আসন্ন</span>
+        <h2 class="text-4xl font-bold text-gray-800 mt-2">📅 ইভেন্ট সমূহ</h2>
+        <div class="section-divider mt-3"></div>
+      </div>
+
+      <div id="events-loading" class="text-center py-8">
+        <div class="animate-spin h-10 w-10 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+        <p class="text-gray-500 mt-3">লোড হচ্ছে...</p>
+      </div>
+
+      <div id="events-container" class="grid md:grid-cols-3 gap-4 hidden"></div>
+
+      <div id="events-empty" class="hidden text-center py-8">
+        <div class="text-5xl mb-3">📅</div>
+        <p class="text-gray-500">এখনো কোনো ইভেন্ট নেই</p>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="events.html" class="inline-block bg-green-700 text-white font-bold px-6 py-3 rounded-lg hover:bg-green-600 transition-all">সব ইভেন্ট দেখুন →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- Quick Cards Section (আগের) -->
+  <!-- ============================================ -->
   <section class="py-20 bg-white">
     <div class="max-w-5xl mx-auto px-6">
       <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">আমাদের কার্যক্রম</h2>
@@ -104,7 +128,7 @@
         <a href="activities.html" class="card bg-green-50 rounded-xl p-6 text-center block">
           <div class="text-4xl mb-3">📚</div>
           <h3 class="font-bold text-xl text-green-800 mb-2">Activities</h3>
-          <p class="text-gray-600 text-sm">Quran Study, Lectures, Events & More</p>
+          <p class="text-gray-600 text-sm">Quran Study, Lectures & More</p>
         </a>
         <a href="committee.html" class="card bg-yellow-50 rounded-xl p-6 text-center block">
           <div class="text-4xl mb-3">👥</div>
@@ -120,6 +144,36 @@
     </div>
   </section>
 
+  <!-- ============================================ -->
+  <!-- 📰 LATEST NEWS SECTION -->
+  <!-- ============================================ -->
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <span class="text-blue-600 font-bold text-sm uppercase tracking-wider">সর্বশেষ</span>
+        <h2 class="text-4xl font-bold text-gray-800 mt-2">📰 নিউজ ও ঘোষণা</h2>
+        <div class="section-divider mt-3"></div>
+      </div>
+
+      <div id="news-loading" class="text-center py-8">
+        <div class="animate-spin h-10 w-10 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+        <p class="text-gray-500 mt-3">লোড হচ্ছে...</p>
+      </div>
+
+      <div id="news-container" class="grid md:grid-cols-3 gap-6 hidden"></div>
+
+      <div id="news-empty" class="hidden text-center py-8">
+        <div class="text-5xl mb-3">📰</div>
+        <p class="text-gray-500">এখনো কোনো নিউজ নেই</p>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="news.html" class="inline-block bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-500 transition-all">সব নিউজ দেখুন →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join Us Section (আগের) -->
   <section class="py-16 bg-green-900 text-white text-center islamic-pattern">
     <div class="max-w-4xl mx-auto px-6 animate-fade-in">
       <div class="mb-6 inline-block p-4 bg-yellow-400 rounded-full text-green-900 shadow-xl">
@@ -128,15 +182,15 @@
         </svg>
       </div>
       <h2 class="text-4xl font-bold mb-4 text-yellow-400">আমাদের সাথে যুক্ত হোন</h2>
-      <p class="text-lg mb-8 opacity-90">আপনি কি সরকারি বিজ্ঞান কলেজের শিক্ষার্থী? আমাদের কাফেলায় শামিল হয়ে নিজের ঈমানী শক্তি এবং নেতৃত্বের গুণাবলি বৃদ্ধি করুন।</p>
-      <a href="signup.html" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold px-10 py-4 rounded-xl text-xl shadow-lg transform hover:-translate-y-1 transition-all duration-300">📝 সদস্য রেজিস্ট্রেশন করুন</a>
+      <p class="text-lg mb-8 opacity-90">আপনি কি সরকারি বিজ্ঞান কলেজের শিক্ষার্থী?</p>
+      <a href="signup.html" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold px-10 py-4 rounded-xl text-xl shadow-lg">📝 সদস্য রেজিস্ট্রেশন করুন</a>
     </div>
   </section>
 
   <footer class="bg-gray-900 text-white py-10 text-center">
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
-      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, ঢাকা। ইসলামী সংস্কৃতি ও নৈতিকতা চর্চার একটি নিরাপদ প্রাঙ্গণ।</p>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, ঢাকা।</p>
       <hr class="border-gray-700 mb-6">
       <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
     </div>
@@ -144,16 +198,176 @@
 
   <button id="backToTop" title="Back to Top">↑</button>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="detail-modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box relative">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      <div id="modal-content" class="p-6"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="gsc-toast" id="toast">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script src="firebase-config.js"></script>
   <script>
+    // ============ Load Latest Notices ============
+    function loadNotices() {
+      db.collection('notices').orderBy('date', 'desc').limit(3).get()
+        .then(function(snapshot) {
+          document.getElementById('notices-loading').classList.add('hidden');
+          if (snapshot.empty) {
+            document.getElementById('notices-empty').classList.remove('hidden');
+            return;
+          }
+          var container = document.getElementById('notices-container');
+          container.classList.remove('hidden');
+          snapshot.forEach(function(doc) {
+            var d = doc.data();
+            var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+            var badge = d.important ? '<span class="badge badge-important">🔥 জরুরি</span>' : '<span class="badge badge-general">📢 নোটিশ</span>';
+            container.innerHTML += '<div class="notice-item" onclick="showNoticeModal(\'' + doc.id + '\')">' +
+              badge +
+              '<h3 class="font-bold text-lg text-gray-800 mt-2 mb-2">' + (d.title || '') + '</h3>' +
+              '<p class="text-gray-600 text-sm line-clamp-3">' + (d.content || '').substring(0, 120) + '...</p>' +
+              '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p>' +
+              '</div>';
+          });
+        })
+        .catch(function() {
+          document.getElementById('notices-loading').classList.add('hidden');
+          document.getElementById('notices-empty').classList.remove('hidden');
+        });
+    }
+
+    // ============ Load Upcoming Events ============
+    function loadEvents() {
+      db.collection('events').orderBy('date', 'asc').limit(3).get()
+        .then(function(snapshot) {
+          document.getElementById('events-loading').classList.add('hidden');
+          if (snapshot.empty) {
+            document.getElementById('events-empty').classList.remove('hidden');
+            return;
+          }
+          var container = document.getElementById('events-container');
+          container.classList.remove('hidden');
+          snapshot.forEach(function(doc) {
+            var d = doc.data();
+            var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+            var badgeClass = d.status === 'past' ? 'badge-past' : d.status === 'active' ? 'badge-active' : 'badge-upcoming';
+            var badgeText = d.status === 'past' ? '✅ সম্পন্ন' : d.status === 'active' ? '🔴 চলমান' : '🕐 আসন্ন';
+            container.innerHTML += '<div class="event-card" onclick="showEventModal(\'' + doc.id + '\')">' +
+              '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+              '<h3 class="font-bold text-lg text-gray-800 mt-2 mb-2">' + (d.title || '') + '</h3>' +
+              '<p class="text-gray-600 text-sm">📍 ' + (d.venue || 'স্থান নির্ধারিত হয়নি') + '</p>' +
+              '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p>' +
+              '</div>';
+          });
+        })
+        .catch(function() {
+          document.getElementById('events-loading').classList.add('hidden');
+          document.getElementById('events-empty').classList.remove('hidden');
+        });
+    }
+
+    // ============ Load Latest News ============
+    function loadNews() {
+      db.collection('news').orderBy('date', 'desc').limit(3).get()
+        .then(function(snapshot) {
+          document.getElementById('news-loading').classList.add('hidden');
+          if (snapshot.empty) {
+            document.getElementById('news-empty').classList.remove('hidden');
+            return;
+          }
+          var container = document.getElementById('news-container');
+          container.classList.remove('hidden');
+          snapshot.forEach(function(doc) {
+            var d = doc.data();
+            var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+            var img = d.image ? '<img src="' + d.image + '" class="w-full h-40 object-cover">' : '<div class="w-full h-40 bg-gradient-to-r from-green-600 to-green-800 flex items-center justify-center text-white text-4xl">📰</div>';
+            container.innerHTML += '<div class="news-card" onclick="showNewsModal(\'' + doc.id + '\')">' +
+              img +
+              '<div class="p-4">' +
+              '<p class="text-xs text-gray-500 mb-2">📅 ' + date + '</p>' +
+              '<h3 class="font-bold text-lg text-gray-800 mb-2">' + (d.title || '') + '</h3>' +
+              '<p class="text-gray-600 text-sm line-clamp-2">' + (d.content || '').substring(0, 100) + '...</p>' +
+              '</div></div>';
+          });
+        })
+        .catch(function() {
+          document.getElementById('news-loading').classList.add('hidden');
+          document.getElementById('news-empty').classList.remove('hidden');
+        });
+    }
+
+    // ============ Modal Functions ============
+    function showNoticeModal(id) {
+      db.collection('notices').doc(id).get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        document.getElementById('modal-content').innerHTML =
+          '<div class="text-center mb-4"><span class="badge badge-important">📢 নোটিশ</span></div>' +
+          '<h2 class="text-2xl font-bold text-gray-800 mb-3">' + d.title + '</h2>' +
+          '<p class="text-sm text-gray-500 mb-4">📅 ' + date + '</p>' +
+          '<div class="text-gray-700 leading-relaxed whitespace-pre-wrap">' + d.content + '</div>';
+        document.getElementById('detail-modal').classList.add('open');
+      });
+    }
+
+    function showEventModal(id) {
+      db.collection('events').doc(id).get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        var img = d.image ? '<img src="' + d.image + '" class="w-full h-56 object-cover rounded-lg mb-4">' : '';
+        var regBtn = d.regLink ? '<a href="' + d.regLink + '" target="_blank" class="inline-block mt-4 bg-green-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600">📝 রেজিস্ট্রেশন করুন</a>' : '';
+        document.getElementById('modal-content').innerHTML =
+          img +
+          '<h2 class="text-2xl font-bold text-gray-800 mb-3">' + d.title + '</h2>' +
+          '<p class="text-sm text-gray-500 mb-2">📅 ' + date + ' · 📍 ' + (d.venue || '---') + '</p>' +
+          '<div class="text-gray-700 leading-relaxed whitespace-pre-wrap mt-4">' + d.description + '</div>' +
+          regBtn;
+        document.getElementById('detail-modal').classList.add('open');
+      });
+    }
+
+    function showNewsModal(id) {
+      db.collection('news').doc(id).get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        var img = d.image ? '<img src="' + d.image + '" class="w-full h-56 object-cover rounded-lg mb-4">' : '';
+        document.getElementById('modal-content').innerHTML =
+          img +
+          '<h2 class="text-2xl font-bold text-gray-800 mb-3">' + d.title + '</h2>' +
+          '<p class="text-sm text-gray-500 mb-4">📅 ' + date + '</p>' +
+          '<div class="text-gray-700 leading-relaxed whitespace-pre-wrap">' + d.content + '</div>';
+        document.getElementById('detail-modal').classList.add('open');
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.remove('open');
+    }
+
+    // Load all
+    loadNotices();
+    loadEvents();
+    loadNews();
+
+    // Dark Mode + Back to Top
     var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
     darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
     var btn = document.getElementById('backToTop');
     window.addEventListener('scroll', function() { btn.style.opacity = window.scrollY > 200 ? '1' : '0'; btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden'; });
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
-  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
 
+  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
 </body>
 </html>
