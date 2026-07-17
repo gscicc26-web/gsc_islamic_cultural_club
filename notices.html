@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Notices</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="h-full smooth-scroll bg-yellow-50">
+
+  <button class="dark-toggle" id="darkToggle">🌙</button>
+
+  <nav class="sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-wrap justify-center items-center gap-4">
+        <a href="index.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Home</a>
+        <a href="notices.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Notices</a>
+        <a href="events.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Events</a>
+        <a href="news.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">News</a>
+        <a href="gallery.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Gallery</a>
+        <a href="contact.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Contact</a>
+        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gradient-bg islamic-pattern py-12 text-center text-white">
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">📢 নোটিশ বোর্ড</h1>
+    <p class="opacity-80">সকল সাম্প্রতিক নোটিশ</p>
+  </div>
+
+  <section class="py-12">
+    <div class="max-w-5xl mx-auto px-6">
+      <div id="loading" class="text-center py-8">
+        <div class="animate-spin h-12 w-12 border-4 border-yellow-500 border-t-transparent rounded-full mx-auto"></div>
+      </div>
+      <div id="notices-list" class="space-y-4"></div>
+      <div id="empty" class="hidden text-center py-12">
+        <div class="text-6xl mb-3">📭</div>
+        <p class="text-gray-500 text-lg">কোনো নোটিশ পাওয়া যায়নি</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="detail-modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box relative">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      <div id="modal-content" class="p-6"></div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-900 text-white py-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
+      <hr class="border-gray-700 mb-6">
+      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
+    </div>
+  </footer>
+
+  <script src="firebase-config.js"></script>
+  <script>
+    db.collection('notices').orderBy('date', 'desc').get().then(function(snapshot) {
+      document.getElementById('loading').classList.add('hidden');
+      if (snapshot.empty) { document.getElementById('empty').classList.remove('hidden'); return; }
+      var list = document.getElementById('notices-list');
+      snapshot.forEach(function(doc) {
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        var badge = d.important ? '<span class="badge badge-important">🔥 জরুরি</span>' : '<span class="badge badge-general">📢 সাধারণ</span>';
+        list.innerHTML += '<div class="notice-item" onclick="showModal(\'' + doc.id + '\')">' +
+          badge +
+          '<h3 class="font-bold text-xl text-gray-800 mt-2 mb-2">' + d.title + '</h3>' +
+          '<p class="text-gray-600">' + (d.content || '').substring(0, 200) + '...</p>' +
+          '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p></div>';
+      });
+    });
+
+    function showModal(id) {
+      db.collection('notices').doc(id).get().then(function(doc) {
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        document.getElementById('modal-content').innerHTML =
+          '<h2 class="text-2xl font-bold mb-3">' + d.title + '</h2>' +
+          '<p class="text-sm text-gray-500 mb-4">📅 ' + date + '</p>' +
+          '<div class="whitespace-pre-wrap">' + d.content + '</div>';
+        document.getElementById('detail-modal').classList.add('open');
+      });
+    }
+    function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
+
+    var darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
+    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+  </script>
+</body>
+</html>
