@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="h-full smooth-scroll bg-yellow-50">
@@ -35,14 +36,19 @@
 
   <section class="py-12">
     <div class="max-w-5xl mx-auto px-6">
+
       <div id="loading" class="text-center py-8">
         <div class="animate-spin h-12 w-12 border-4 border-yellow-500 border-t-transparent rounded-full mx-auto"></div>
+        <p class="text-gray-500 mt-3">লোড হচ্ছে...</p>
       </div>
+
       <div id="notices-list" class="space-y-4"></div>
+
       <div id="empty" class="hidden text-center py-12">
         <div class="text-6xl mb-3">📭</div>
         <p class="text-gray-500 text-lg">কোনো নোটিশ পাওয়া যায়নি</p>
       </div>
+
     </div>
   </section>
 
@@ -63,46 +69,87 @@
 
   <script src="firebase-config.js"></script>
   <script>
-    db.collection('notices').get().then(function(snapshot) {
-      document.getElementById('loading').classList.add('hidden');
-      if (snapshot.empty) { document.getElementById('empty').classList.remove('hidden'); return; }
+    console.log('Notices page loaded');
 
-      var notices = [];
-      snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; notices.push(d); });
-      notices.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+    // Load Notices
+    db.collection('notices').get()
+      .then(function(snapshot) {
+        console.log('Snapshot received. Size:', snapshot.size);
 
-      var list = document.getElementById('notices-list');
-      notices.forEach(function(d) {
-        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
-        var badge = d.important ? '<span class="badge badge-important">🔥 জরুরি</span>' : '<span class="badge badge-general">📢 সাধারণ</span>';
-        list.innerHTML += '<div class="notice-item" onclick="showModal(\'' + d.id + '\')">' +
-          badge +
-          '<h3 class="font-bold text-xl text-gray-800 mt-2 mb-2">' + d.title + '</h3>' +
-          '<p class="text-gray-600">' + (d.content || '').substring(0, 200) + '...</p>' +
-          '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p></div>';
+        // Hide loading
+        document.getElementById('loading').style.display = 'none';
+
+        if (snapshot.empty) {
+          console.log('No notices found');
+          document.getElementById('empty').classList.remove('hidden');
+          return;
+        }
+
+        var notices = [];
+        snapshot.forEach(function(doc) {
+          var d = doc.data();
+          d.id = doc.id;
+          notices.push(d);
+          console.log('Notice:', d.title);
+        });
+
+        // Sort by date
+        notices.sort(function(a, b) {
+          return new Date(b.date || 0) - new Date(a.date || 0);
+        });
+
+        // Render
+        var list = document.getElementById('notices-list');
+        var html = '';
+        notices.forEach(function(d) {
+          var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+          var badge = d.important ? '<span class="badge badge-important">🔥 জরুরি</span>' : '<span class="badge badge-general">📢 সাধারণ</span>';
+          html += '<div class="notice-item" onclick="showModal(\'' + d.id + '\')">' +
+            badge +
+            '<h3 class="font-bold text-xl text-gray-800 mt-2 mb-2">' + (d.title || '') + '</h3>' +
+            '<p class="text-gray-600">' + (d.content || '').substring(0, 200) + (d.content && d.content.length > 200 ? '...' : '') + '</p>' +
+            '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p></div>';
+        });
+        list.innerHTML = html;
+        console.log('Rendered', notices.length, 'notices');
+      })
+      .catch(function(err) {
+        console.error('Error loading notices:', err);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('empty').classList.remove('hidden');
+        document.getElementById('empty').innerHTML = '<div class="text-6xl mb-3">⚠️</div><p class="text-red-500 text-lg font-bold">Error লোড করতে সমস্যা!</p><p class="text-gray-500 text-sm mt-2">' + err.message + '</p>';
       });
-    }).catch(function(err) {
-      console.error(err);
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('empty').classList.remove('hidden');
-    });
 
     function showModal(id) {
       db.collection('notices').doc(id).get().then(function(doc) {
+        if (!doc.exists) return;
         var d = doc.data();
         var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
         document.getElementById('modal-content').innerHTML =
-          '<h2 class="text-2xl font-bold mb-3">' + d.title + '</h2>' +
+          '<div class="text-center mb-4"><span class="badge badge-important">📢 নোটিশ</span></div>' +
+          '<h2 class="text-2xl font-bold text-gray-800 mb-3">' + d.title + '</h2>' +
           '<p class="text-sm text-gray-500 mb-4">📅 ' + date + '</p>' +
-          '<div class="whitespace-pre-wrap">' + d.content + '</div>';
+          '<div class="text-gray-700 leading-relaxed whitespace-pre-wrap">' + d.content + '</div>';
         document.getElementById('detail-modal').classList.add('open');
       });
     }
-    function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
 
+    function closeModal() {
+      document.getElementById('detail-modal').classList.remove('open');
+    }
+
+    // Dark Mode
     var darkToggle = document.getElementById('darkToggle');
-    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
-    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      darkToggle.textContent = '☀️';
+    }
+    darkToggle.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      var isDark = document.body.classList.contains('dark-mode');
+      darkToggle.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('darkMode', isDark);
+    });
   </script>
 </body>
 </html>
