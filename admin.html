@@ -14,7 +14,7 @@
 </head>
 <body class="h-full bg-gray-50">
 
-  <!-- ===== STEP 1: Firebase Login ===== -->
+  <!-- STEP 1: Firebase Login -->
   <div id="step1-login" class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
     <div class="max-w-md w-full">
       <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-green-700">
@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <!-- ===== STEP 2: Admin Password ===== -->
+  <!-- STEP 2: Admin Password -->
   <div id="step2-admin-password" class="min-h-screen flex items-center justify-center bg-gray-50 px-4 hidden">
     <div class="max-w-md w-full">
       <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-yellow-400">
@@ -61,10 +61,9 @@
     </div>
   </div>
 
-  <!-- ===== ADMIN PANEL ===== -->
+  <!-- ADMIN PANEL -->
   <div id="admin-panel" class="hidden">
 
-    <!-- Sidebar -->
     <aside class="admin-sidebar" id="sidebar">
       <div class="admin-sidebar-header">
         <img src="logo.png" class="w-10 h-10 rounded-full bg-white" alt="Logo">
@@ -97,17 +96,15 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="admin-main-content">
 
-      <!-- Topbar -->
       <div class="admin-topbar">
         <button class="admin-mobile-toggle" onclick="toggleSidebar()">☰</button>
         <h1 class="text-xl font-bold text-gray-800" id="page-title">Dashboard</h1>
         <div id="topbar-actions"></div>
       </div>
 
-      <!-- Dashboard Section -->
+      <!-- Dashboard -->
       <section id="section-dashboard" class="admin-section">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div class="admin-stat-card"><p class="text-xs text-gray-500 uppercase">📢 Notices</p><p class="text-3xl font-bold text-green-700 mt-2" id="stat-notices">0</p></div>
@@ -128,7 +125,7 @@
         </div>
       </section>
 
-      <!-- Notices Section -->
+      <!-- Notices -->
       <section id="section-notices" class="admin-section hidden">
         <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
           <table class="data-table">
@@ -138,7 +135,7 @@
         </div>
       </section>
 
-      <!-- Events Section -->
+      <!-- Events -->
       <section id="section-events" class="admin-section hidden">
         <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
           <table class="data-table">
@@ -148,7 +145,7 @@
         </div>
       </section>
 
-      <!-- News Section -->
+      <!-- News -->
       <section id="section-news" class="admin-section hidden">
         <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
           <table class="data-table">
@@ -158,7 +155,7 @@
         </div>
       </section>
 
-      <!-- Gallery Section -->
+      <!-- Gallery -->
       <section id="section-gallery" class="admin-section hidden">
         <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
           <table class="data-table">
@@ -168,7 +165,7 @@
         </div>
       </section>
 
-      <!-- Members Section -->
+      <!-- Members -->
       <section id="section-members" class="admin-section hidden">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div class="admin-stat-card" style="border-left-color:#f59e0b"><p class="text-xs text-gray-500 uppercase">⏳ Pending</p><p class="text-2xl font-bold text-yellow-600" id="m-pending">0</p></div>
@@ -185,7 +182,7 @@
         <div id="members-list" class="space-y-3"></div>
       </section>
 
-      <!-- Settings Section -->
+      <!-- Settings -->
       <section id="section-settings" class="admin-section hidden">
         <div class="max-w-2xl">
           <div class="bg-white rounded-xl p-6 shadow mb-4">
@@ -213,7 +210,7 @@
     </div>
   </div>
 
-  <!-- ===== MODALS ===== -->
+  <!-- MODALS -->
 
   <!-- Notice Form -->
   <div class="modal-overlay" id="notice-modal" onclick="if(event.target===this)closeFormModal('notice')">
@@ -289,7 +286,6 @@
     <div class="modal-box relative p-6">
       <button class="modal-close-btn" onclick="closeFormModal('gallery')">✕</button>
       <h2 class="text-2xl font-bold mb-4">🖼️ Add Gallery Image</h2>
-      <input type="hidden" id="gallery-id">
       <div class="space-y-3">
         <div><label class="block text-sm font-bold mb-1">Caption *</label><input type="text" id="gallery-caption" class="gsc-input"></div>
         <div>
@@ -317,7 +313,6 @@
 
     emailjs.init('4McRUK1Y1iGOjnHZb');
 
-    // Enter keys
     document.getElementById('admin-login-password').addEventListener('keypress', function(e) { if (e.key === 'Enter') step1Login(); });
     document.getElementById('admin-secret').addEventListener('keypress', function(e) { if (e.key === 'Enter') step2Verify(); });
 
@@ -366,7 +361,6 @@
     function logOut() { auth.signOut().then(function() { window.location.href = 'index.html'; }); }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
-    // Section Switch
     function showSection(section, btn) {
       document.querySelectorAll('.admin-section').forEach(function(s) { s.classList.add('hidden'); });
       document.getElementById('section-' + section).classList.remove('hidden');
@@ -393,20 +387,31 @@
       if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
 
-    // Dashboard
     function loadDashboard() {
       db.collection('notices').get().then(function(s) { document.getElementById('stat-notices').textContent = s.size; });
       db.collection('events').get().then(function(s) { document.getElementById('stat-events').textContent = s.size; });
       db.collection('news').get().then(function(s) { document.getElementById('stat-news').textContent = s.size; });
       db.collection('members').get().then(function(s) { document.getElementById('stat-members').textContent = s.size; });
-      db.collection('notices').orderBy('date', 'desc').limit(5).get().then(function(snap) {
+
+      // Recent Notices
+      db.collection('notices').get().then(function(snap) {
+        var notices = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; notices.push(d); });
+        notices.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+        notices = notices.slice(0, 5);
         var html = '';
-        snap.forEach(function(doc) { var d = doc.data(); html += '<div class="p-2 bg-yellow-50 rounded">📢 ' + d.title + '</div>'; });
+        notices.forEach(function(d) { html += '<div class="p-2 bg-yellow-50 rounded">📢 ' + d.title + '</div>'; });
         document.getElementById('dash-notices').innerHTML = html || '<p class="text-gray-400">No notices</p>';
       });
-      db.collection('events').orderBy('date', 'asc').limit(5).get().then(function(snap) {
+
+      // Recent Events
+      db.collection('events').get().then(function(snap) {
+        var events = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; events.push(d); });
+        events.sort(function(a, b) { return new Date(a.date || 0) - new Date(b.date || 0); });
+        events = events.slice(0, 5);
         var html = '';
-        snap.forEach(function(doc) { var d = doc.data(); html += '<div class="p-2 bg-green-50 rounded">📅 ' + d.title + '</div>'; });
+        events.forEach(function(d) { html += '<div class="p-2 bg-green-50 rounded">📅 ' + d.title + '</div>'; });
         document.getElementById('dash-events').innerHTML = html || '<p class="text-gray-400">No events</p>';
       });
     }
@@ -437,7 +442,7 @@
       var data = {
         title: document.getElementById('notice-title').value,
         content: document.getElementById('notice-content').value,
-        date: document.getElementById('notice-date').value || new Date().toISOString(),
+        date: document.getElementById('notice-date').value ? new Date(document.getElementById('notice-date').value).toISOString() : new Date().toISOString(),
         important: document.getElementById('notice-important').checked,
         updatedAt: new Date().toISOString()
       };
@@ -451,13 +456,16 @@
     }
 
     function loadNoticesAdmin() {
-      db.collection('notices').orderBy('date', 'desc').get().then(function(snap) {
+      db.collection('notices').get().then(function(snap) {
+        var notices = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; notices.push(d); });
+        notices.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+
         var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
+        notices.forEach(function(d) {
           var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '---';
           var badge = d.important ? '<span class="badge badge-important">🔥 জরুরি</span>' : '<span class="badge badge-general">📢 সাধারণ</span>';
-          html += '<tr><td class="font-medium">' + d.title + '</td><td>' + badge + '</td><td>' + date + '</td><td><button onclick="openNoticeForm(\'' + doc.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'notices\',\'' + doc.id + '\')" class="text-red-600">🗑️</button></td></tr>';
+          html += '<tr><td class="font-medium">' + d.title + '</td><td>' + badge + '</td><td>' + date + '</td><td><button onclick="openNoticeForm(\'' + d.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'notices\',\'' + d.id + '\')" class="text-red-600">🗑️</button></td></tr>';
         });
         document.getElementById('notices-table').innerHTML = html || '<tr><td colspan="4" class="text-center py-8 text-gray-400">কোনো নোটিশ নেই</td></tr>';
       });
@@ -482,7 +490,7 @@
           if (d.image) { document.getElementById('event-image-preview').src = d.image; document.getElementById('event-image-preview').classList.remove('hidden'); }
         });
       } else {
-        ['event-title','event-description','event-venue','event-reglink'].forEach(function(i) { document.getElementById(i).value = ''; });
+        ['event-title', 'event-description', 'event-venue', 'event-reglink'].forEach(function(i) { document.getElementById(i).value = ''; });
         document.getElementById('event-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('event-status').value = 'upcoming';
       }
@@ -494,7 +502,7 @@
       var data = {
         title: document.getElementById('event-title').value,
         description: document.getElementById('event-description').value,
-        date: document.getElementById('event-date').value || new Date().toISOString(),
+        date: document.getElementById('event-date').value ? new Date(document.getElementById('event-date').value).toISOString() : new Date().toISOString(),
         status: document.getElementById('event-status').value,
         venue: document.getElementById('event-venue').value,
         regLink: document.getElementById('event-reglink').value,
@@ -511,14 +519,17 @@
     }
 
     function loadEventsAdmin() {
-      db.collection('events').orderBy('date', 'desc').get().then(function(snap) {
+      db.collection('events').get().then(function(snap) {
+        var events = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; events.push(d); });
+        events.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+
         var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
+        events.forEach(function(d) {
           var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '---';
           var img = d.image ? '<img src="' + d.image + '" class="w-16 h-12 object-cover rounded">' : '<div class="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">📅</div>';
           var status = d.status === 'past' ? '<span class="badge badge-past">✅ Past</span>' : d.status === 'active' ? '<span class="badge badge-active">🔴 Active</span>' : '<span class="badge badge-upcoming">🕐 Upcoming</span>';
-          html += '<tr><td>' + img + '</td><td class="font-medium">' + d.title + '</td><td>' + status + '</td><td>' + date + '</td><td><button onclick="openEventForm(\'' + doc.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'events\',\'' + doc.id + '\')" class="text-red-600">🗑️</button></td></tr>';
+          html += '<tr><td>' + img + '</td><td class="font-medium">' + d.title + '</td><td>' + status + '</td><td>' + date + '</td><td><button onclick="openEventForm(\'' + d.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'events\',\'' + d.id + '\')" class="text-red-600">🗑️</button></td></tr>';
         });
         document.getElementById('events-table').innerHTML = html || '<tr><td colspan="5" class="text-center py-8 text-gray-400">কোনো ইভেন্ট নেই</td></tr>';
       });
@@ -552,7 +563,7 @@
       var data = {
         title: document.getElementById('news-title').value,
         content: document.getElementById('news-content').value,
-        date: document.getElementById('news-date').value || new Date().toISOString(),
+        date: document.getElementById('news-date').value ? new Date(document.getElementById('news-date').value).toISOString() : new Date().toISOString(),
         image: document.getElementById('news-image').value,
         updatedAt: new Date().toISOString()
       };
@@ -566,13 +577,16 @@
     }
 
     function loadNewsAdmin() {
-      db.collection('news').orderBy('date', 'desc').get().then(function(snap) {
+      db.collection('news').get().then(function(snap) {
+        var newsList = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; newsList.push(d); });
+        newsList.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
+
         var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
+        newsList.forEach(function(d) {
           var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '---';
           var img = d.image ? '<img src="' + d.image + '" class="w-16 h-12 object-cover rounded">' : '<div class="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">📰</div>';
-          html += '<tr><td>' + img + '</td><td class="font-medium">' + d.title + '</td><td>' + date + '</td><td><button onclick="openNewsForm(\'' + doc.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'news\',\'' + doc.id + '\')" class="text-red-600">🗑️</button></td></tr>';
+          html += '<tr><td>' + img + '</td><td class="font-medium">' + d.title + '</td><td>' + date + '</td><td><button onclick="openNewsForm(\'' + d.id + '\')" class="text-blue-600 mr-2">✏️</button><button onclick="deleteItem(\'news\',\'' + d.id + '\')" class="text-red-600">🗑️</button></td></tr>';
         });
         document.getElementById('news-table').innerHTML = html || '<tr><td colspan="4" class="text-center py-8 text-gray-400">কোনো নিউজ নেই</td></tr>';
       });
@@ -602,11 +616,14 @@
     }
 
     function loadGalleryAdmin() {
-      db.collection('gallery').orderBy('createdAt', 'desc').get().then(function(snap) {
+      db.collection('gallery').get().then(function(snap) {
+        var items = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        items.sort(function(a, b) { return new Date(b.createdAt || 0) - new Date(a.createdAt || 0); });
+
         var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
-          html += '<tr><td><img src="' + d.image + '" class="w-20 h-16 object-cover rounded"></td><td>' + d.caption + '</td><td><button onclick="deleteItem(\'gallery\',\'' + doc.id + '\')" class="text-red-600">🗑️</button></td></tr>';
+        items.forEach(function(d) {
+          html += '<tr><td><img src="' + d.image + '" class="w-20 h-16 object-cover rounded"></td><td>' + d.caption + '</td><td><button onclick="deleteItem(\'gallery\',\'' + d.id + '\')" class="text-red-600">🗑️</button></td></tr>';
         });
         document.getElementById('gallery-table').innerHTML = html || '<tr><td colspan="3" class="text-center py-8 text-gray-400">কোনো ছবি নেই</td></tr>';
       });
@@ -614,13 +631,15 @@
 
     // ========== MEMBERS ==========
     function loadMembersAdmin() {
-      db.collection('members').orderBy('joinDate', 'desc').get().then(function(snap) {
+      db.collection('members').get().then(function(snap) {
         allMembers = [];
-        var p=0, a=0, r=0;
+        var p = 0, a = 0, r = 0;
         snap.forEach(function(doc) {
           var d = doc.data(); d.docId = doc.id; allMembers.push(d);
           if (d.status === 'Pending') p++; else if (d.status === 'Active') a++; else if (d.status === 'Rejected') r++;
         });
+        allMembers.sort(function(a, b) { return new Date(b.joinDate || 0) - new Date(a.joinDate || 0); });
+
         document.getElementById('m-pending').textContent = p;
         document.getElementById('m-active').textContent = a;
         document.getElementById('m-rejected').textContent = r;
@@ -642,10 +661,10 @@
         var photo = m.profilePicture && m.profilePicture.length > 10 ? '<img src="' + m.profilePicture + '" class="w-14 h-14 rounded-full object-cover">' : '<div class="w-14 h-14 rounded-full bg-green-700 text-yellow-400 flex items-center justify-center font-bold text-xl">' + (m.fullName ? m.fullName.charAt(0) : '?') + '</div>';
         var badge = m.status === 'Pending' ? '<span class="badge badge-important">⏳ Pending</span>' : m.status === 'Active' ? '<span class="badge badge-active">✅ Active</span>' : '<span class="badge badge-past">❌ Rejected</span>';
         var btns = '';
-        if (m.status === 'Pending') btns = '<button onclick="approveMember(\'' + m.docId + '\',\'' + (m.fullName||'') + '\')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">✅ Approve</button> <button onclick="rejectMember(\'' + m.docId + '\',\'' + (m.fullName||'') + '\')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">❌ Reject</button>';
-        else if (m.status === 'Active') btns = '<button onclick="rejectMember(\'' + m.docId + '\',\'' + (m.fullName||'') + '\')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">❌ Remove</button>';
-        else btns = '<button onclick="approveMember(\'' + m.docId + '\',\'' + (m.fullName||'') + '\')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">✅ Approve</button>';
-        list.innerHTML += '<div class="bg-white rounded-xl shadow p-4 flex flex-wrap items-center gap-3">' + photo + '<div class="flex-1"><h4 class="font-bold">' + (m.fullName||'---') + '</h4><p class="text-sm text-gray-500">' + (m.email||'') + ' · ' + (m.department||'') + '</p><div class="mt-1">' + badge + '</div></div><div class="flex gap-2">' + btns + '</div></div>';
+        if (m.status === 'Pending') btns = '<button onclick="approveMember(\'' + m.docId + '\',\'' + (m.fullName || '') + '\')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">✅ Approve</button> <button onclick="rejectMember(\'' + m.docId + '\',\'' + (m.fullName || '') + '\')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">❌ Reject</button>';
+        else if (m.status === 'Active') btns = '<button onclick="rejectMember(\'' + m.docId + '\',\'' + (m.fullName || '') + '\')" class="bg-red-500 text-white px-3 py-1 rounded text-xs">❌ Remove</button>';
+        else btns = '<button onclick="approveMember(\'' + m.docId + '\',\'' + (m.fullName || '') + '\')" class="bg-green-600 text-white px-3 py-1 rounded text-xs">✅ Approve</button>';
+        list.innerHTML += '<div class="bg-white rounded-xl shadow p-4 flex flex-wrap items-center gap-3">' + photo + '<div class="flex-1"><h4 class="font-bold">' + (m.fullName || '---') + '</h4><p class="text-sm text-gray-500">' + (m.email || '') + ' · ' + (m.department || '') + '</p><div class="mt-1">' + badge + '</div></div><div class="flex gap-2">' + btns + '</div></div>';
       });
     }
 
@@ -693,7 +712,6 @@
 
     function closeFormModal(type) { document.getElementById(type + '-modal').classList.remove('open'); }
 
-    // Image Upload (Base64)
     function handleImageUpload(input, targetId) {
       if (!input.files || !input.files[0]) return;
       var file = input.files[0];
