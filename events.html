@@ -35,7 +35,6 @@
 
   <section class="py-12">
     <div class="max-w-6xl mx-auto px-6">
-      <!-- Filter -->
       <div class="flex gap-3 mb-6 flex-wrap justify-center">
         <button onclick="filterEvents('all')" class="px-4 py-2 bg-green-700 text-white rounded-lg font-bold text-sm">সব</button>
         <button onclick="filterEvents('upcoming')" class="px-4 py-2 bg-blue-500 text-white rounded-lg font-bold text-sm">🕐 আসন্ন</button>
@@ -73,11 +72,16 @@
   <script>
     var allEvents = [];
 
-    db.collection('events').orderBy('date', 'desc').get().then(function(snapshot) {
+    db.collection('events').get().then(function(snapshot) {
       document.getElementById('loading').classList.add('hidden');
       if (snapshot.empty) { document.getElementById('empty').classList.remove('hidden'); return; }
       snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; allEvents.push(d); });
+      allEvents.sort(function(a, b) { return new Date(b.date || 0) - new Date(a.date || 0); });
       renderEvents(allEvents);
+    }).catch(function(err) {
+      console.error(err);
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('empty').classList.remove('hidden');
     });
 
     function renderEvents(events) {
