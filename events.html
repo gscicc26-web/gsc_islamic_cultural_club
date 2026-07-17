@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="h-full smooth-scroll bg-green-50">
+
+  <button class="dark-toggle" id="darkToggle">🌙</button>
+
+  <nav class="sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-wrap justify-center items-center gap-4">
+        <a href="index.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Home</a>
+        <a href="notices.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Notices</a>
+        <a href="events.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Events</a>
+        <a href="news.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">News</a>
+        <a href="gallery.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Gallery</a>
+        <a href="contact.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Contact</a>
+        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gradient-bg islamic-pattern py-12 text-center text-white">
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">📅 ইভেন্ট সমূহ</h1>
+    <p class="opacity-80">সকল আসন্ন ও সমাপ্ত ইভেন্ট</p>
+  </div>
+
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <!-- Filter -->
+      <div class="flex gap-3 mb-6 flex-wrap justify-center">
+        <button onclick="filterEvents('all')" class="px-4 py-2 bg-green-700 text-white rounded-lg font-bold text-sm">সব</button>
+        <button onclick="filterEvents('upcoming')" class="px-4 py-2 bg-blue-500 text-white rounded-lg font-bold text-sm">🕐 আসন্ন</button>
+        <button onclick="filterEvents('active')" class="px-4 py-2 bg-green-500 text-white rounded-lg font-bold text-sm">🔴 চলমান</button>
+        <button onclick="filterEvents('past')" class="px-4 py-2 bg-gray-500 text-white rounded-lg font-bold text-sm">✅ সমাপ্ত</button>
+      </div>
+
+      <div id="loading" class="text-center py-8">
+        <div class="animate-spin h-12 w-12 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+      </div>
+      <div id="events-list" class="grid md:grid-cols-2 gap-4"></div>
+      <div id="empty" class="hidden text-center py-12">
+        <div class="text-6xl mb-3">📅</div>
+        <p class="text-gray-500 text-lg">কোনো ইভেন্ট নেই</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="detail-modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box relative">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      <div id="modal-content" class="p-6"></div>
+    </div>
+  </div>
+
+  <footer class="bg-gray-900 text-white py-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
+      <hr class="border-gray-700 mb-6">
+      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
+    </div>
+  </footer>
+
+  <script src="firebase-config.js"></script>
+  <script>
+    var allEvents = [];
+
+    db.collection('events').orderBy('date', 'desc').get().then(function(snapshot) {
+      document.getElementById('loading').classList.add('hidden');
+      if (snapshot.empty) { document.getElementById('empty').classList.remove('hidden'); return; }
+      snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; allEvents.push(d); });
+      renderEvents(allEvents);
+    });
+
+    function renderEvents(events) {
+      var list = document.getElementById('events-list');
+      list.innerHTML = '';
+      if (events.length === 0) { list.innerHTML = '<p class="text-center col-span-2 text-gray-500 py-8">এই ক্যাটাগরিতে ইভেন্ট নেই</p>'; return; }
+      events.forEach(function(d) {
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        var badgeClass = d.status === 'past' ? 'badge-past' : d.status === 'active' ? 'badge-active' : 'badge-upcoming';
+        var badgeText = d.status === 'past' ? '✅ সম্পন্ন' : d.status === 'active' ? '🔴 চলমান' : '🕐 আসন্ন';
+        list.innerHTML += '<div class="event-card" onclick="showModal(\'' + d.id + '\')">' +
+          '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
+          '<h3 class="font-bold text-xl text-gray-800 mt-2 mb-2">' + d.title + '</h3>' +
+          '<p class="text-gray-600 text-sm">📍 ' + (d.venue || '---') + '</p>' +
+          '<p class="text-xs text-gray-500 mt-3">📅 ' + date + '</p></div>';
+      });
+    }
+
+    function filterEvents(status) {
+      if (status === 'all') renderEvents(allEvents);
+      else renderEvents(allEvents.filter(function(e) { return e.status === status; }));
+    }
+
+    function showModal(id) {
+      db.collection('events').doc(id).get().then(function(doc) {
+        var d = doc.data();
+        var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
+        var img = d.image ? '<img src="' + d.image + '" class="w-full h-56 object-cover rounded-lg mb-4">' : '';
+        var regBtn = d.regLink ? '<a href="' + d.regLink + '" target="_blank" class="inline-block mt-4 bg-green-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600">📝 রেজিস্ট্রেশন</a>' : '';
+        document.getElementById('modal-content').innerHTML = img +
+          '<h2 class="text-2xl font-bold mb-3">' + d.title + '</h2>' +
+          '<p class="text-sm text-gray-500 mb-2">📅 ' + date + ' · 📍 ' + (d.venue || '---') + '</p>' +
+          '<div class="whitespace-pre-wrap mt-4">' + d.description + '</div>' + regBtn;
+        document.getElementById('detail-modal').classList.add('open');
+      });
+    }
+    function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
+
+    var darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
+    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+  </script>
+</body>
+</html>
