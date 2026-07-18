@@ -6,68 +6,180 @@
   <title>GSCICC | Home</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* Navigation Styles - Direct in HTML */
+    .navbar {
+      background: rgba(11, 46, 34, 0.97);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex: 1;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-links a {
+      color: #fbbf24;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .menu-button {
+      background: #fbbf24;
+      color: #0a3d2e;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 10px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+    }
+
+    .menu-button:hover {
+      background: #fcd34d;
+    }
+
+    #dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      min-width: 240px;
+      padding: 10px;
+      z-index: 9999;
+      border-top: 4px solid #fbbf24;
+    }
+
+    #dropdown.show {
+      display: block;
+    }
+
+    #dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 15px;
+      color: #1a202c;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    #dropdown a:hover {
+      background: #f0fdf4;
+      color: #14532d;
+    }
+
+    .dropdown-line {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 8px 0;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 8px;
+      padding: 5px;
+    }
+
+    .auth-buttons a {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      justify-content: center;
+    }
+
+    .signup-btn {
+      background: #16a34a !important;
+      color: white !important;
+    }
+
+    .login-btn {
+      background: #fbbf24 !important;
+      color: #0a3d2e !important;
+    }
+
+    body.dark-mode #dropdown {
+      background: #1f2937;
+    }
+
+    body.dark-mode #dropdown a {
+      color: #f3f4f6;
+    }
+
+    body.dark-mode #dropdown a:hover {
+      background: #0a3d2e;
+      color: #fbbf24;
+    }
+  </style>
 </head>
 <body class="h-full smooth-scroll bg-white">
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
-  <nav class="sticky top-0 z-50 shadow-lg">
-  <div class="main-nav relative">
-    <!-- Left: Main Nav Links -->
-    <div class="nav-left">
-      <a href="index.html" class="nav-link-main">🏠 Home</a>
-      <a href="notices.html" class="nav-link-main">📢 Notices</a>
-      <a href="events.html" class="nav-link-main">📅 Events</a>
-      <a href="news.html" class="nav-link-main">📰 News</a>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
     </div>
 
-    <!-- Right: Menu Button -->
-    <div class="nav-right">
-      <button class="menu-btn" onclick="toggleDropdown()" id="menuBtn">
-        ☰ <span class="hidden sm:inline">Menu</span>
-      </button>
-    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
 
-    <!-- Dropdown Menu -->
-    <div class="dropdown-menu" id="dropdown">
-      <a href="about.html" class="dropdown-item">
-        <span>ℹ️</span> About Us
-      </a>
-      <a href="activities.html" class="dropdown-item">
-        <span>📚</span> Activities
-      </a>
-      <a href="committee.html" class="dropdown-item">
-        <span>👥</span> Committee
-      </a>
-      <a href="founders.html" class="dropdown-item">
-        <span>🌟</span> Founders
-      </a>
-      <a href="gallery.html" class="dropdown-item">
-        <span>🖼️</span> Gallery
-      </a>
-      <a href="constitution.html" class="dropdown-item">
-        <span>📋</span> Constitution
-      </a>
-      <a href="contact.html" class="dropdown-item">
-        <span>📞</span> Contact
-      </a>
-
-      <div class="dropdown-divider"></div>
-
-      <div class="dropdown-auth">
-        <a href="signup.html" class="dropdown-signup">📝 Sign Up</a>
-        <a href="login.html" class="dropdown-login">🔑 Login</a>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- Overlay -->
-  <div class="menu-overlay" id="menuOverlay" onclick="closeDropdown()"></div>
-</nav>
-
+  <!-- Notice Bar -->
   <div class="bg-yellow-100 py-3 border-b border-yellow-200">
     <div class="max-w-7xl mx-auto px-6 flex items-center">
       <span class="bg-red-600 text-white px-3 py-1 rounded-md text-sm font-bold mr-4 animate-pulse">NOTICE</span>
@@ -77,6 +189,7 @@
     </div>
   </div>
 
+  <!-- Header -->
   <header class="gradient-bg islamic-pattern py-20 text-center text-white">
     <div class="max-w-4xl mx-auto px-6 animate-fade-in">
       <div class="mb-8">
@@ -94,6 +207,7 @@
     </div>
   </header>
 
+  <!-- Notices Section -->
   <section class="py-16 bg-yellow-50">
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-10">
@@ -115,6 +229,7 @@
     </div>
   </section>
 
+  <!-- Events Section -->
   <section class="py-16 bg-green-50">
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-10">
@@ -136,6 +251,7 @@
     </div>
   </section>
 
+  <!-- Quick Cards -->
   <section class="py-20 bg-white">
     <div class="max-w-5xl mx-auto px-6">
       <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">আমাদের কার্যক্রম</h2>
@@ -160,6 +276,7 @@
     </div>
   </section>
 
+  <!-- News Section -->
   <section class="py-16 bg-gray-50">
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-10">
@@ -181,6 +298,7 @@
     </div>
   </section>
 
+  <!-- Join Us -->
   <section class="py-16 bg-green-900 text-white text-center islamic-pattern">
     <div class="max-w-4xl mx-auto px-6">
       <div class="mb-6 inline-block p-4 bg-yellow-400 rounded-full text-green-900 shadow-xl">
@@ -205,6 +323,7 @@
 
   <button id="backToTop" title="Back to Top">↑</button>
 
+  <!-- Detail Modal -->
   <div class="modal-overlay" id="detail-modal">
     <div class="modal-box p-6">
       <button class="modal-close-btn" onclick="closeModal()">✕</button>
@@ -214,13 +333,28 @@
 
   <script src="firebase-config.js"></script>
   <script>
+    // Menu Toggle
+    function toggleMenu() {
+      var dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
     // Load Marquee
     function loadMarquee() {
       db.collection('settings').doc('main').get().then(function(doc) {
         if (doc.exists && doc.data().marquee) {
           document.getElementById('site-marquee').textContent = "📢 " + doc.data().marquee;
         }
-      }).catch(function(err) { console.log('Marquee error:', err); });
+      });
     }
 
     // Load Notices
@@ -249,10 +383,6 @@
             '<p class="text-xs mt-3" style="color:#6b7280">📅 ' + date + '</p></div>';
         });
         container.innerHTML = html;
-      }).catch(function(err) {
-        console.error(err);
-        document.getElementById('notices-loading').style.display = 'none';
-        document.getElementById('notices-empty').classList.remove('hidden');
       });
     }
 
@@ -283,10 +413,6 @@
             '<p class="text-xs mt-3" style="color:#6b7280">📅 ' + date + '</p></div>';
         });
         container.innerHTML = html;
-      }).catch(function(err) {
-        console.error(err);
-        document.getElementById('events-loading').style.display = 'none';
-        document.getElementById('events-empty').classList.remove('hidden');
       });
     }
 
@@ -318,10 +444,6 @@
             '</div></div>';
         });
         container.innerHTML = html;
-      }).catch(function(err) {
-        console.error(err);
-        document.getElementById('news-loading').style.display = 'none';
-        document.getElementById('news-empty').classList.remove('hidden');
       });
     }
 
@@ -331,7 +453,6 @@
         var d = doc.data();
         var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
         document.getElementById('modal-content').innerHTML =
-          '<div class="text-center mb-4"><span class="badge badge-important">📢 নোটিশ</span></div>' +
           '<h2 class="text-2xl font-bold mb-3" style="color:#1a202c">' + d.title + '</h2>' +
           '<p class="text-sm mb-4" style="color:#6b7280">📅 ' + date + '</p>' +
           '<div class="leading-relaxed whitespace-pre-wrap" style="color:#2d3748">' + d.content + '</div>';
@@ -345,7 +466,7 @@
         var d = doc.data();
         var date = d.date ? new Date(d.date).toLocaleDateString('bn-BD') : '';
         var img = d.image ? '<img src="' + d.image + '" class="w-full h-56 object-cover rounded-lg mb-4">' : '';
-        var regBtn = d.regLink ? '<a href="' + d.regLink + '" target="_blank" class="inline-block mt-4 bg-green-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600">📝 রেজিস্ট্রেশন</a>' : '';
+        var regBtn = d.regLink ? '<a href="' + d.regLink + '" target="_blank" class="inline-block mt-4 bg-green-700 text-white px-6 py-3 rounded-lg font-bold">📝 রেজিস্ট্রেশন</a>' : '';
         document.getElementById('modal-content').innerHTML = img +
           '<h2 class="text-2xl font-bold mb-3" style="color:#1a202c">' + d.title + '</h2>' +
           '<p class="text-sm mb-2" style="color:#6b7280">📅 ' + date + ' · 📍 ' + (d.venue || '---') + '</p>' +
@@ -372,46 +493,23 @@
       document.getElementById('detail-modal').classList.remove('open');
     }
 
-    // Load all
+    // Load everything
     loadMarquee();
     loadNotices();
     loadEvents();
     loadNews();
 
+    // Dark Mode
     var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
     darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+
+    // Back to Top
     var btn = document.getElementById('backToTop');
     window.addEventListener('scroll', function() { btn.style.opacity = window.scrollY > 200 ? '1' : '0'; btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden'; });
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  // Dropdown Toggle
-function toggleDropdown() {
-  var dropdown = document.getElementById('dropdown');
-  var overlay = document.getElementById('menuOverlay');
-  dropdown.classList.toggle('open');
-  overlay.classList.toggle('open');
-}
-
-function closeDropdown() {
-  document.getElementById('dropdown').classList.remove('open');
-  document.getElementById('menuOverlay').classList.remove('open');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-  var dropdown = document.getElementById('dropdown');
-  var menuBtn = document.getElementById('menuBtn');
-  if (dropdown && !dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
-    closeDropdown();
-  }
-});
-
-// Active page highlight
-document.querySelectorAll('.nav-link-main').forEach(function(link) {
-  if (link.href === window.location.href) {
-    link.classList.add('active-page');
-  }
-});
   </script>
+
+  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
 </body>
 </html>
