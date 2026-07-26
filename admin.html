@@ -13,13 +13,14 @@
 </head>
 <body class="h-full bg-gray-50">
 
+  <!-- ===== STEP 1: LOGIN (single step now — Firestore Rules do the real access control) ===== -->
   <div id="step1-login" class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
     <div class="max-w-md w-full">
       <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-green-700">
         <div class="text-center mb-6">
           <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center text-4xl mb-3">🛡️</div>
           <h2 class="text-2xl font-bold" style="color:#1a202c">GSCICC Admin</h2>
-          <p class="text-gray-500 text-sm mt-1">ধাপ ১: Firebase লগইন</p>
+          <p class="text-gray-500 text-sm mt-1">Firebase দিয়ে লগইন করুন</p>
         </div>
         <div class="space-y-4">
           <input type="email" id="admin-email" class="gsc-input" placeholder="Email">
@@ -27,23 +28,6 @@
           <button onclick="step1Login()" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">🔓 Login</button>
         </div>
         <p id="step1-error" class="text-red-500 text-sm text-center mt-3 hidden"></p>
-      </div>
-    </div>
-  </div>
-
-  <div id="step2-admin-password" class="min-h-screen flex items-center justify-center bg-gray-50 px-4 hidden">
-    <div class="max-w-md w-full">
-      <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-yellow-400">
-        <div class="text-center mb-6">
-          <div class="w-20 h-20 mx-auto bg-yellow-100 rounded-full flex items-center justify-center text-4xl mb-3">🔐</div>
-          <h2 class="text-2xl font-bold" style="color:#1a202c">Admin Verification</h2>
-          <p class="text-green-600 text-sm mt-2 font-medium" id="logged-as"></p>
-        </div>
-        <div class="space-y-4">
-          <input type="password" id="admin-secret" class="gsc-input" placeholder="Admin Password">
-          <button onclick="step2Verify()" class="w-full bg-yellow-500 text-white font-bold py-3 rounded-lg hover:bg-yellow-400">🔓 Verify</button>
-        </div>
-        <p id="step2-error" class="text-red-500 text-sm text-center mt-3 hidden">❌ ভুল পাসওয়ার্ড!</p>
       </div>
     </div>
   </div>
@@ -155,7 +139,7 @@
         <textarea id="notice-content" class="gsc-input" rows="5" placeholder="Content *"></textarea>
         <input type="date" id="notice-date" class="gsc-input">
         <label class="flex items-center gap-2 p-3 bg-red-50 rounded-lg"><input type="checkbox" id="notice-important" class="w-5 h-5"> 🔥 জরুরি নোটিশ</label>
-        <button onclick="saveNotice()" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+        <button onclick="saveNotice()" id="notice-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
       </div>
     </div>
   </div>
@@ -179,9 +163,10 @@
         <input type="text" id="event-venue" class="gsc-input" placeholder="Venue">
         <input type="url" id="event-reglink" class="gsc-input" placeholder="Registration Link">
         <input type="file" id="event-image-file" accept="image/*" onchange="handleImageUpload(this, 'event-image')" class="gsc-input">
+        <div id="event-image-status" class="text-sm hidden"></div>
         <img id="event-image-preview" class="max-h-32 rounded-lg hidden">
         <input type="hidden" id="event-image">
-        <button onclick="saveEvent()" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+        <button onclick="saveEvent()" id="event-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
       </div>
     </div>
   </div>
@@ -196,9 +181,10 @@
         <textarea id="news-content" class="gsc-input" rows="6" placeholder="Content *"></textarea>
         <input type="date" id="news-date" class="gsc-input">
         <input type="file" id="news-image-file" accept="image/*" onchange="handleImageUpload(this, 'news-image')" class="gsc-input">
+        <div id="news-image-status" class="text-sm hidden"></div>
         <img id="news-image-preview" class="max-h-32 rounded-lg hidden">
         <input type="hidden" id="news-image">
-        <button onclick="saveNews()" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+        <button onclick="saveNews()" id="news-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
       </div>
     </div>
   </div>
@@ -210,9 +196,10 @@
       <div class="space-y-3">
         <input type="text" id="gallery-caption" class="gsc-input" placeholder="Caption *">
         <input type="file" id="gallery-image-file" accept="image/*" onchange="handleImageUpload(this, 'gallery-image')" class="gsc-input">
+        <div id="gallery-image-status" class="text-sm hidden"></div>
         <img id="gallery-image-preview" class="max-h-32 rounded-lg hidden">
         <input type="hidden" id="gallery-image">
-        <button onclick="saveGalleryItem()" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+        <button onclick="saveGalleryItem()" id="gallery-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
       </div>
     </div>
   </div>
@@ -224,12 +211,15 @@
 
   <script src="firebase-config.js"></script>
   <script>
-    var ADMIN_PASSWORD = 'gscicc2024admin';
+    // ================= CONFIG =================
+    var ADMIN_EMAIL = 'gscicc26@gmail.com'; // must match the email in Firestore Rules
+    var IMGBB_API_KEY = 'c4a71c0e6b1654aef96db873487dad46';
+
     var allMembers = [];
 
     document.getElementById('admin-login-password').addEventListener('keypress', function(e) { if (e.key === 'Enter') step1Login(); });
-    document.getElementById('admin-secret').addEventListener('keypress', function(e) { if (e.key === 'Enter') step2Verify(); });
 
+    // ================= TOAST =================
     function showToast(msg, type) {
       var t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
@@ -238,28 +228,28 @@
       setTimeout(function() { t.classList.remove('show'); }, 3000);
     }
 
+    // ================= LOGIN (single step) =================
     function step1Login() {
       var email = document.getElementById('admin-email').value;
       var password = document.getElementById('admin-login-password').value;
       var errorEl = document.getElementById('step1-error');
+      errorEl.classList.add('hidden');
+
       if (!email || !password) { errorEl.textContent = '❌ সব ফিল্ড পূরণ করুন!'; errorEl.classList.remove('hidden'); return; }
+
       auth.signInWithEmailAndPassword(email, password)
-        .then(function() {
-          document.getElementById('logged-as').textContent = '✅ ' + email;
+        .then(function(cred) {
+          if (cred.user.email !== ADMIN_EMAIL) {
+            errorEl.textContent = '❌ আপনি অ্যাডমিন নন! এই একাউন্টে অ্যাক্সেস নেই।';
+            errorEl.classList.remove('hidden');
+            auth.signOut();
+            return;
+          }
           document.getElementById('step1-login').classList.add('hidden');
-          document.getElementById('step2-admin-password').classList.remove('hidden');
+          document.getElementById('admin-panel').classList.remove('hidden');
+          loadDashboard();
         })
         .catch(function(error) { errorEl.textContent = '❌ ' + error.message; errorEl.classList.remove('hidden'); });
-    }
-
-    function step2Verify() {
-      if (document.getElementById('admin-secret').value === ADMIN_PASSWORD) {
-        document.getElementById('step2-admin-password').classList.add('hidden');
-        document.getElementById('admin-panel').classList.remove('hidden');
-        loadDashboard();
-      } else {
-        document.getElementById('step2-error').classList.remove('hidden');
-      }
     }
 
     function logOut() { auth.signOut().then(function() { window.location.href = 'index.html'; }); }
@@ -290,13 +280,14 @@
     }
 
     function loadDashboard() {
-      db.collection('notices').get().then(function(s) { document.getElementById('stat-notices').textContent = s.size; });
+      db.collection('notices').get().then(function(s) { document.getElementById('stat-notices').textContent = s.size; })
+        .catch(function(e) { showToast('Dashboard লোড এরর: ' + e.message, 'error'); });
       db.collection('events').get().then(function(s) { document.getElementById('stat-events').textContent = s.size; });
       db.collection('news').get().then(function(s) { document.getElementById('stat-news').textContent = s.size; });
       db.collection('members').get().then(function(s) { document.getElementById('stat-members').textContent = s.size; });
     }
 
-    // NOTICES
+    // ================= NOTICES =================
     function openNoticeForm(id) {
       document.getElementById('notice-modal-title').textContent = id ? 'Edit Notice' : 'Add Notice';
       document.getElementById('notice-id').value = id || '';
@@ -326,11 +317,20 @@
         important: document.getElementById('notice-important').checked
       };
       if (!data.title || !data.content) { showToast('Title ও Content দিন!', 'error'); return; }
+
+      var btn = document.getElementById('notice-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
       var promise = id ? db.collection('notices').doc(id).update(data) : db.collection('notices').add(data);
       promise.then(function() {
-        showToast('Saved!');
+        showToast('Notice সেভ হয়েছে! ✅');
         closeFormModal('notice');
         loadNoticesAdmin();
+        loadDashboard();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
       });
     }
 
@@ -346,15 +346,17 @@
           html += '<tr><td>' + d.title + '</td><td>' + badge + '</td><td>' + date + '</td><td><button onclick="openNoticeForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteItem(\'notices\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
         });
         document.getElementById('notices-table').innerHTML = html || '<tr><td colspan="4" style="text-align:center;padding:32px;color:#9ca3af">কোনো নোটিশ নেই</td></tr>';
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
-    // EVENTS
+    // ================= EVENTS =================
     function openEventForm(id) {
       document.getElementById('event-modal-title').textContent = id ? 'Edit Event' : 'Add Event';
       document.getElementById('event-id').value = id || '';
       document.getElementById('event-image-preview').classList.add('hidden');
+      document.getElementById('event-image-status').classList.add('hidden');
       document.getElementById('event-image').value = '';
+      document.getElementById('event-image-file').value = '';
       if (id) {
         db.collection('events').doc(id).get().then(function(doc) {
           var d = doc.data();
@@ -386,11 +388,20 @@
         image: document.getElementById('event-image').value
       };
       if (!data.title || !data.description) { showToast('Title ও Description দিন!', 'error'); return; }
+
+      var btn = document.getElementById('event-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
       var promise = id ? db.collection('events').doc(id).update(data) : db.collection('events').add(data);
       promise.then(function() {
-        showToast('Saved!');
+        showToast('Event সেভ হয়েছে! ✅');
         closeFormModal('event');
         loadEventsAdmin();
+        loadDashboard();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
       });
     }
 
@@ -406,15 +417,17 @@
           html += '<tr><td>' + img + '</td><td>' + d.title + '</td><td>' + (d.status || '') + '</td><td>' + date + '</td><td><button onclick="openEventForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteItem(\'events\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
         });
         document.getElementById('events-table').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af">কোনো ইভেন্ট নেই</td></tr>';
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
-    // NEWS
+    // ================= NEWS =================
     function openNewsForm(id) {
       document.getElementById('news-modal-title').textContent = id ? 'Edit News' : 'Add News';
       document.getElementById('news-id').value = id || '';
       document.getElementById('news-image-preview').classList.add('hidden');
+      document.getElementById('news-image-status').classList.add('hidden');
       document.getElementById('news-image').value = '';
+      document.getElementById('news-image-file').value = '';
       if (id) {
         db.collection('news').doc(id).get().then(function(doc) {
           var d = doc.data();
@@ -441,11 +454,20 @@
         image: document.getElementById('news-image').value
       };
       if (!data.title || !data.content) { showToast('Title ও Content দিন!', 'error'); return; }
+
+      var btn = document.getElementById('news-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
       var promise = id ? db.collection('news').doc(id).update(data) : db.collection('news').add(data);
       promise.then(function() {
-        showToast('Saved!');
+        showToast('News সেভ হয়েছে! ✅');
         closeFormModal('news');
         loadNewsAdmin();
+        loadDashboard();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
       });
     }
 
@@ -461,14 +483,16 @@
           html += '<tr><td>' + img + '</td><td>' + d.title + '</td><td>' + date + '</td><td><button onclick="openNewsForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteItem(\'news\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
         });
         document.getElementById('news-table').innerHTML = html || '<tr><td colspan="4" style="text-align:center;padding:32px;color:#9ca3af">কোনো নিউজ নেই</td></tr>';
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
-    // GALLERY
+    // ================= GALLERY =================
     function openGalleryForm() {
       document.getElementById('gallery-caption').value = '';
       document.getElementById('gallery-image').value = '';
+      document.getElementById('gallery-image-file').value = '';
       document.getElementById('gallery-image-preview').classList.add('hidden');
+      document.getElementById('gallery-image-status').classList.add('hidden');
       document.getElementById('gallery-modal').classList.add('open');
     }
 
@@ -476,10 +500,18 @@
       var caption = document.getElementById('gallery-caption').value;
       var image = document.getElementById('gallery-image').value;
       if (!caption || !image) { showToast('Caption ও Image দিন!', 'error'); return; }
+
+      var btn = document.getElementById('gallery-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
       db.collection('gallery').add({ caption: caption, image: image, createdAt: new Date().toISOString() }).then(function() {
-        showToast('Saved!');
+        showToast('ছবি সেভ হয়েছে! ✅');
         closeFormModal('gallery');
         loadGalleryAdmin();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
       });
     }
 
@@ -492,10 +524,10 @@
           html += '<tr><td><img src="' + d.image + '" style="width:80px;height:60px;object-fit:cover;border-radius:5px"></td><td>' + d.caption + '</td><td><button onclick="deleteItem(\'gallery\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
         });
         document.getElementById('gallery-table').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:32px;color:#9ca3af">কোনো ছবি নেই</td></tr>';
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
-    // MEMBERS
+    // ================= MEMBERS =================
     function loadMembersAdmin() {
       db.collection('members').get().then(function(snap) {
         allMembers = [];
@@ -508,23 +540,27 @@
           var btns = m.status === 'Pending' ? '<button onclick="approveMember(\'' + m.docId + '\')" style="background:#16a34a;color:white;padding:5px 10px;border-radius:5px;border:none;margin-right:5px">✅ Approve</button><button onclick="rejectMember(\'' + m.docId + '\')" style="background:#dc2626;color:white;padding:5px 10px;border-radius:5px;border:none">❌ Reject</button>' : '<span style="color:' + (m.status === 'Active' ? '#16a34a' : '#dc2626') + ';font-weight:bold">' + m.status + '</span>';
           list.innerHTML += '<div style="background:white;padding:15px;border-radius:10px;display:flex;gap:15px;align-items:center;flex-wrap:wrap">' + photo + '<div style="flex:1"><h4 style="font-weight:bold;color:#1a202c">' + (m.fullName || '---') + '</h4><p style="font-size:0.85rem;color:#6b7280">' + (m.email || '') + '</p></div><div>' + btns + '</div></div>';
         });
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
     function approveMember(id) {
-      db.collection('members').doc(id).update({ status: 'Active' }).then(function() { showToast('Approved!'); loadMembersAdmin(); });
+      db.collection('members').doc(id).update({ status: 'Active' })
+        .then(function() { showToast('Approved! ✅'); loadMembersAdmin(); })
+        .catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
     function rejectMember(id) {
-      db.collection('members').doc(id).update({ status: 'Rejected' }).then(function() { showToast('Rejected'); loadMembersAdmin(); });
+      db.collection('members').doc(id).update({ status: 'Rejected' })
+        .then(function() { showToast('Rejected'); loadMembersAdmin(); })
+        .catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
 
-    // SETTINGS
+    // ================= SETTINGS =================
     function loadSettings() {
       db.collection('settings').doc('main').get().then(function(doc) {
         if (doc.exists) {
           document.getElementById('setting-marquee').value = doc.data().marquee || '';
         }
-      });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
     function saveMarquee() {
@@ -537,15 +573,18 @@
       });
     }
 
-    // COMMON
+    // ================= COMMON =================
     function deleteItem(collection, id) {
       if (!confirm('Delete করতে চান?')) return;
       db.collection(collection).doc(id).delete().then(function() {
-        showToast('Deleted!');
+        showToast('Deleted! ✅');
         if (collection === 'notices') loadNoticesAdmin();
         if (collection === 'events') loadEventsAdmin();
         if (collection === 'news') loadNewsAdmin();
         if (collection === 'gallery') loadGalleryAdmin();
+        loadDashboard();
+      }).catch(function(err) {
+        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
       });
     }
 
@@ -553,28 +592,58 @@
       document.getElementById(type + '-modal').classList.remove('open');
     }
 
+    // ================= IMGBB IMAGE UPLOAD =================
+    // Replaces old base64-in-Firestore approach — uploads to ImgBB, stores only the URL.
     function handleImageUpload(input, targetId) {
       if (!input.files || !input.files[0]) return;
       var file = input.files[0];
-      if (file.size > 500 * 1024) { showToast('সর্বোচ্চ 500KB!', 'error'); input.value = ''; return; }
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var img = new Image();
-        img.onload = function() {
-          var canvas = document.createElement('canvas');
-          var maxSize = 800, w = img.width, h = img.height;
-          if (w > h) { if (w > maxSize) { h = h * (maxSize / w); w = maxSize; } }
-          else { if (h > maxSize) { w = w * (maxSize / h); h = maxSize; } }
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          var base64 = canvas.toDataURL('image/jpeg', 0.75);
-          document.getElementById(targetId).value = base64;
-          document.getElementById(targetId + '-preview').src = base64;
-          document.getElementById(targetId + '-preview').classList.remove('hidden');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+
+      if (!file.type.startsWith('image/')) {
+        showToast('শুধু ছবি আপলোড করা যাবে!', 'error');
+        input.value = '';
+        return;
+      }
+      // ImgBB free tier limit is 32MB, but we keep a sane cap for faster uploads
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('সর্বোচ্চ 10MB!', 'error');
+        input.value = '';
+        return;
+      }
+
+      var statusEl = document.getElementById(targetId + '-status');
+      var previewEl = document.getElementById(targetId + '-preview');
+      statusEl.textContent = '⏳ Uploading...';
+      statusEl.className = 'text-sm text-gray-500';
+      statusEl.classList.remove('hidden');
+
+      var formData = new FormData();
+      formData.append('image', file);
+
+      fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, {
+        method: 'POST',
+        body: formData
+      })
+        .then(function(res) { return res.json(); })
+        .then(function(result) {
+          if (result.success) {
+            var url = result.data.url;
+            document.getElementById(targetId).value = url;
+            previewEl.src = url;
+            previewEl.classList.remove('hidden');
+            statusEl.textContent = '✅ আপলোড সম্পন্ন';
+            statusEl.className = 'text-sm text-green-600';
+            showToast('ছবি আপলোড হয়েছে! ✅');
+          } else {
+            statusEl.textContent = '❌ আপলোড ব্যর্থ';
+            statusEl.className = 'text-sm text-red-600';
+            showToast('❌ ImgBB আপলোড ব্যর্থ: ' + (result.error ? result.error.message : 'Unknown error'), 'error');
+          }
+        })
+        .catch(function(err) {
+          statusEl.textContent = '❌ নেটওয়ার্ক এরর';
+          statusEl.className = 'text-sm text-red-600';
+          showToast('❌ আপলোড এরর: ' + err.message, 'error');
+        });
     }
   </script>
 
