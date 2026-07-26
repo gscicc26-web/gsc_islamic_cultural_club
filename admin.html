@@ -51,7 +51,8 @@
         <button class="admin-nav-item" onclick="showSection('gallery', this)"><span>🖼️</span> Gallery</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Members</div>
         <button class="admin-nav-item" onclick="showSection('members', this)"><span>👥</span> Members</button>
-        <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Settings</div>
+        <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Notice & Settings</div>
+        <button class="admin-nav-item" onclick="showSection('popup', this)"><span>📢</span> Popup Notice</button>
         <button class="admin-nav-item" onclick="showSection('settings', this)"><span>⚙️</span> Settings</button>
       </nav>
       <div class="px-5 py-4 border-t border-white/10 mt-4">
@@ -114,6 +115,46 @@
 
       <section id="section-members" class="admin-section hidden">
         <div id="members-list" class="space-y-3"></div>
+      </section>
+
+      <section id="section-popup" class="admin-section hidden">
+        <div class="max-w-2xl space-y-4">
+          <div class="bg-white rounded-xl p-6 shadow">
+            <h3 class="font-bold mb-1" style="color:#1a202c">📢 Popup Notice</h3>
+            <p class="text-gray-500 text-sm mb-4">ভিজিটর যখন সাইট খুলবে তখন এই পপআপটা একবার (দিনে একবার) দেখাবে।</p>
+
+            <label class="flex items-center gap-2 p-3 bg-green-50 rounded-lg mb-4">
+              <input type="checkbox" id="popup-active" class="w-5 h-5">
+              <span class="font-semibold text-sm">🔔 পপআপ চালু রাখুন</span>
+            </label>
+
+            <div class="space-y-3">
+              <input type="text" id="popup-title" class="gsc-input" placeholder="Popup Title * (যেমন: গুরুত্বপূর্ণ ঘোষণা)">
+              <textarea id="popup-message" class="gsc-input" rows="4" placeholder="Popup Message * (যেমন: রেজিস্ট্রেশনের শেষ দিন আজ!)"></textarea>
+              <div class="grid grid-cols-2 gap-3">
+                <input type="text" id="popup-btn-text" class="gsc-input" placeholder="Button Text" value="আবেদন করুন">
+                <input type="url" id="popup-btn-link" class="gsc-input" placeholder="Button Link (URL)">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1">⏰ ডেডলাইন (কাউন্টডাউন টাইমারের জন্য, ঐচ্ছিক)</label>
+                <input type="datetime-local" id="popup-deadline" class="gsc-input">
+                <p class="text-xs text-gray-400 mt-1">এই সময় পর্যন্ত লাইভ কাউন্টডাউন দেখাবে; পার হয়ে গেলে "বন্ধ হয়ে গেছে" দেখাবে।</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 shadow">
+            <h3 class="font-bold mb-1" style="color:#1a202c">🔴 উপরের নোটিশ বার</h3>
+            <p class="text-gray-500 text-sm mb-4">পেজের একদম উপরে একটা চিকন বার হিসেবে দেখাবে।</p>
+            <label class="flex items-center gap-2 p-3 bg-green-50 rounded-lg mb-4">
+              <input type="checkbox" id="popup-nb-active" class="w-5 h-5">
+              <span class="font-semibold text-sm">📌 নোটিশ বার দেখান</span>
+            </label>
+            <input type="text" id="popup-nb-text" class="gsc-input" placeholder="নোটিশ বার টেক্সট (যেমন: রেজিস্ট্রেশন চলছে!)">
+          </div>
+
+          <button onclick="savePopupSettings()" id="popup-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save Popup Settings</button>
+        </div>
       </section>
 
       <section id="section-settings" class="admin-section hidden">
@@ -260,7 +301,7 @@
       document.getElementById('section-' + section).classList.remove('hidden');
       document.querySelectorAll('.admin-nav-item').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', members: 'Members', settings: 'Settings' };
+      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
       document.getElementById('page-title').textContent = titles[section];
 
       var actions = document.getElementById('topbar-actions');
@@ -268,6 +309,7 @@
       else if (section === 'events') actions.innerHTML = '<button onclick="openEventForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Event</button>';
       else if (section === 'news') actions.innerHTML = '<button onclick="openNewsForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add News</button>';
       else if (section === 'gallery') actions.innerHTML = '<button onclick="openGalleryForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Image</button>';
+      else if (section === 'members') actions.innerHTML = '<button onclick="downloadMembersCSV()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">⬇️ Export CSV</button>';
       else actions.innerHTML = '';
 
       if (section === 'notices') loadNoticesAdmin();
@@ -275,6 +317,7 @@
       if (section === 'news') loadNewsAdmin();
       if (section === 'gallery') loadGalleryAdmin();
       if (section === 'members') loadMembersAdmin();
+      if (section === 'popup') loadPopupSettings();
       if (section === 'settings') loadSettings();
       if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
     }
@@ -554,6 +597,27 @@
         .catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
 
+    function downloadMembersCSV() {
+      if (!allMembers || allMembers.length === 0) { showToast('কোনো মেম্বার নেই!', 'error'); return; }
+      var headers = ['Name', 'Email', 'Phone', 'Department', 'Session', 'Roll', 'Blood Group', 'Address', 'Status', 'Member ID', 'Join Date'];
+      var csv = headers.join(',') + '\n';
+      allMembers.forEach(function(m) {
+        var joinDate = m.joinDate ? new Date(m.joinDate).toLocaleDateString('en-GB') : '';
+        var row = [
+          m.fullName || '', m.email || '', m.phone || '', m.department || '',
+          m.session || '', m.roll || '', m.bloodGroup || '', m.address || '',
+          m.status || '', m.memberID || '', joinDate
+        ];
+        csv += row.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',') + '\n';
+      });
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'gscicc-members-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      showToast('CSV ডাউনলোড হয়েছে! ✅');
+    }
+
     // ================= SETTINGS =================
     function loadSettings() {
       db.collection('settings').doc('main').get().then(function(doc) {
@@ -570,6 +634,47 @@
         showToast('✅ Marquee সেভ হয়েছে!');
       }).catch(function(err) {
         showToast('❌ ' + err.message, 'error');
+      });
+    }
+
+    // ================= POPUP NOTICE =================
+    function loadPopupSettings() {
+      db.collection('settings').doc('popup').get().then(function(doc) {
+        var d = doc.exists ? doc.data() : {};
+        document.getElementById('popup-active').checked = d.active || false;
+        document.getElementById('popup-title').value = d.title || '';
+        document.getElementById('popup-message').value = d.message || '';
+        document.getElementById('popup-btn-text').value = d.buttonText || 'আবেদন করুন';
+        document.getElementById('popup-btn-link').value = d.buttonLink || '';
+        document.getElementById('popup-deadline').value = d.deadline || '';
+        document.getElementById('popup-nb-active').checked = d.showNoticeBar || false;
+        document.getElementById('popup-nb-text').value = d.noticeBarText || '';
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
+    function savePopupSettings() {
+      var data = {
+        active: document.getElementById('popup-active').checked,
+        title: document.getElementById('popup-title').value.trim(),
+        message: document.getElementById('popup-message').value.trim(),
+        buttonText: document.getElementById('popup-btn-text').value.trim() || 'আবেদন করুন',
+        buttonLink: document.getElementById('popup-btn-link').value.trim(),
+        deadline: document.getElementById('popup-deadline').value,
+        showNoticeBar: document.getElementById('popup-nb-active').checked,
+        noticeBarText: document.getElementById('popup-nb-text').value.trim()
+      };
+      if (data.active && !data.title) { showToast('Popup Title দিন!', 'error'); return; }
+      if (data.active && !data.message) { showToast('Popup Message দিন!', 'error'); return; }
+
+      var btn = document.getElementById('popup-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
+      db.collection('settings').doc('popup').set(data, { merge: true }).then(function() {
+        showToast('Popup Settings সেভ হয়েছে! ✅');
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save Popup Settings';
       });
     }
 
