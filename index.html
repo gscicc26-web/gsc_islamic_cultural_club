@@ -150,6 +150,12 @@
 </head>
 <body class="h-full smooth-scroll bg-white">
 
+  <!-- ===== TOP NOTICE BAR ===== -->
+  <div class="gsc-notice-bar" id="gsc-notice-bar">
+    <span class="nb-dot"></span>
+    <span id="gsc-notice-bar-text"></span>
+  </div>
+
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
   <!-- NAVIGATION -->
@@ -179,7 +185,7 @@
     </div>
   </nav>
 
-  <!-- Notice Bar -->
+  <!-- Notice Bar (marquee) -->
   <div class="bg-yellow-100 py-3 border-b border-yellow-200">
     <div class="max-w-7xl mx-auto px-6 flex items-center">
       <span class="bg-red-600 text-white px-3 py-1 rounded-md text-sm font-bold mr-4 animate-pulse">NOTICE</span>
@@ -328,6 +334,32 @@
     <div class="modal-box p-6">
       <button class="modal-close-btn" onclick="closeModal()">✕</button>
       <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- ===== POPUP NOTICE ===== -->
+  <div class="gsc-popup-ov" id="gsc-popup-ov">
+    <div class="gsc-popup-box">
+      <button class="gsc-popup-close" onclick="closeGscPopup()">✕</button>
+      <div class="gsc-popup-icon" id="gsc-popup-icon">📢</div>
+      <h2 class="gsc-popup-title" id="gsc-popup-title">শিরোনাম</h2>
+      <p class="gsc-popup-msg" id="gsc-popup-msg">মেসেজ</p>
+
+      <div class="gsc-popup-countdown hidden" id="gsc-popup-countdown">
+        <div class="gsc-popup-count-item"><div class="gsc-popup-count-num" id="gsc-cd-days">0</div><div class="gsc-popup-count-label">দিন</div></div>
+        <div class="gsc-popup-count-item"><div class="gsc-popup-count-num" id="gsc-cd-hours">0</div><div class="gsc-popup-count-label">ঘন্টা</div></div>
+        <div class="gsc-popup-count-item"><div class="gsc-popup-count-num" id="gsc-cd-mins">0</div><div class="gsc-popup-count-label">মিনিট</div></div>
+        <div class="gsc-popup-count-item"><div class="gsc-popup-count-num" id="gsc-cd-secs">0</div><div class="gsc-popup-count-label">সেকেন্ড</div></div>
+      </div>
+
+      <div class="gsc-popup-closed hidden" id="gsc-popup-closed-msg">⏰ সময় শেষ হয়ে গেছে!</div>
+
+      <a href="#" target="_blank" class="gsc-popup-btn" id="gsc-popup-btn">আবেদন করুন</a>
+
+      <label class="gsc-popup-dontshow">
+        <input type="checkbox" id="gsc-popup-dontshow-chk">
+        আজকের জন্য আর দেখাবেন না
+      </label>
     </div>
   </div>
 
@@ -508,6 +540,104 @@
     var btn = document.getElementById('backToTop');
     window.addEventListener('scroll', function() { btn.style.opacity = window.scrollY > 200 ? '1' : '0'; btn.style.visibility = window.scrollY > 200 ? 'visible' : 'hidden'; });
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+    /* ===================================================
+       POPUP NOTICE + TOP NOTICE BAR
+       Reads settings from Firestore: settings/popup
+       =================================================== */
+    var gscCountdownTimer = null;
+
+    function gscTodayKey() {
+      var now = new Date();
+      return now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+    }
+
+    function closeGscPopup() {
+      var ov = document.getElementById('gsc-popup-ov');
+      ov.classList.remove('show');
+      if (document.getElementById('gsc-popup-dontshow-chk').checked) {
+        localStorage.setItem('gscPopupClosedDate', gscTodayKey());
+      }
+      if (gscCountdownTimer) { clearInterval(gscCountdownTimer); gscCountdownTimer = null; }
+    }
+
+    function gscStartCountdown(deadlineStr) {
+      var countdownEl = document.getElementById('gsc-popup-countdown');
+      var closedEl = document.getElementById('gsc-popup-closed-msg');
+      var btnEl = document.getElementById('gsc-popup-btn');
+
+      function tick() {
+        var deadline = new Date(deadlineStr).getTime();
+        var now = new Date().getTime();
+        var diff = deadline - now;
+
+        if (diff <= 0) {
+          countdownEl.classList.add('hidden');
+          closedEl.classList.remove('hidden');
+          btnEl.classList.add('disabled');
+          btnEl.removeAttribute('href');
+          btnEl.textContent = '❌ বন্ধ হয়ে গেছে';
+          if (gscCountdownTimer) clearInterval(gscCountdownTimer);
+          return;
+        }
+
+        var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        var secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('gsc-cd-days').textContent = days;
+        document.getElementById('gsc-cd-hours').textContent = hours;
+        document.getElementById('gsc-cd-mins').textContent = mins;
+        document.getElementById('gsc-cd-secs').textContent = secs;
+      }
+
+      countdownEl.classList.remove('hidden');
+      closedEl.classList.add('hidden');
+      tick();
+      gscCountdownTimer = setInterval(tick, 1000);
+    }
+
+    function loadPopupAndNoticeBar() {
+      db.collection('settings').doc('popup').get().then(function(doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+
+        // ---- Top Notice Bar ----
+        if (d.showNoticeBar && d.noticeBarText) {
+          document.getElementById('gsc-notice-bar-text').textContent = d.noticeBarText;
+          document.getElementById('gsc-notice-bar').classList.add('show');
+          document.body.classList.add('has-gsc-notice');
+        }
+
+        // ---- Popup ----
+        if (!d.active || !d.title || !d.message) return;
+
+        var lastClosed = localStorage.getItem('gscPopupClosedDate');
+        if (lastClosed === gscTodayKey()) return; // already dismissed today
+
+        document.getElementById('gsc-popup-title').textContent = d.title;
+        document.getElementById('gsc-popup-msg').textContent = d.message;
+
+        var btnEl = document.getElementById('gsc-popup-btn');
+        if (d.buttonLink) {
+          btnEl.href = d.buttonLink;
+          btnEl.textContent = d.buttonText || 'আবেদন করুন';
+        } else {
+          btnEl.style.display = 'none';
+        }
+
+        if (d.deadline) {
+          gscStartCountdown(d.deadline);
+        }
+
+        document.getElementById('gsc-popup-ov').classList.add('show');
+      }).catch(function(err) {
+        console.log('Popup load error:', err.message);
+      });
+    }
+
+    loadPopupAndNoticeBar();
   </script>
 </body>
 </html>
