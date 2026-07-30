@@ -7,24 +7,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="h-full smooth-scroll bg-green-50">
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
-  <nav class="sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex flex-wrap justify-center items-center gap-4">
-        <a href="index.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
-        <a href="about.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
-        <a href="activities.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
-        <a href="committee.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Committee</a>
-        <a href="founders.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Founders</a>
-        <a href="gallery.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
-        <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
-        <a href="contact.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
-        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
-        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
       </div>
     </div>
   </nav>
@@ -37,7 +48,14 @@
   <section class="py-20 bg-green-50 border-t-4 border-yellow-400">
     <div class="max-w-7xl mx-auto px-6">
       <div class="section-divider"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="founders-grid">
+
+      <div id="founders-loading" class="text-center py-8">
+        <div class="animate-spin h-10 w-10 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="founders-grid"></div>
+      <div id="founders-empty" class="hidden text-center py-12">
+        <div class="text-5xl mb-3">🌟</div>
+        <p class="text-gray-500">ফাউন্ডারদের তথ্য এখনো যোগ করা হয়নি</p>
       </div>
     </div>
   </section>
@@ -45,36 +63,57 @@
   <footer class="bg-gray-900 text-white py-10 text-center">
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
-      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, ঢাকা।</p>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ,তেজগাঁও, ঢাকা।</p>
       <hr class="border-gray-700 mb-6">
-      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
+      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/GSC73</span></p>
     </div>
   </footer>
 
   <button id="backToTop" title="Back to Top">↑</button>
 
+  <script src="firebase-config.js"></script>
   <script>
-    // Generate founder cards
-    var founders = [
-      {name:"Name Here",role:"Chief Founder",batch:"GSC Batch",img:"founder1.jpg"},
-      {name:"Name Here",role:"Co-Founder",batch:"GSC Batch",img:"founder2.jpg"},
-      {name:"Name Here",role:"Co-Founder",batch:"GSC Batch",img:"founder3.jpg"},
-      {name:"Name Here",role:"Co-Founder",batch:"GSC Batch",img:"founder4.jpg"},
-      {name:"Name Here",role:"Co-Founder",batch:"GSC Batch",img:"founder5.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder6.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder7.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder8.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder9.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder10.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder11.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder12.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder13.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder14.jpg"},
-      {name:"Name Here",role:"Founding Member",batch:"Batch 2026",img:"founder15.jpg"}
-    ];
-    var grid = document.getElementById('founders-grid');
-    founders.forEach(function(f,i) {
-      grid.innerHTML += '<div class="card bg-white rounded-2xl p-6 text-center border-b-4 border-green-700 shadow-sm hover:shadow-xl transition-all"><div class="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-yellow-400"><img src="'+f.img+'" alt="Founder '+(i+1)+'" class="w-full h-full object-cover"></div><h3 class="font-bold text-xl text-gray-800">'+f.name+'</h3><p class="text-green-700 text-sm font-semibold">'+f.role+'</p><p class="text-gray-500 text-xs mt-2 italic">'+f.batch+'</p></div>';
+    function loadFounders() {
+      db.collection('founders').get().then(function(snapshot) {
+        document.getElementById('founders-loading').style.display = 'none';
+        if (snapshot.empty) {
+          document.getElementById('founders-empty').classList.remove('hidden');
+          return;
+        }
+        var items = [];
+        snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        items.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+
+        var grid = document.getElementById('founders-grid');
+        var html = '';
+        items.forEach(function(f, i) {
+          var avatar = f.photo
+            ? '<img src="' + f.photo + '" alt="Founder ' + (i + 1) + '" class="w-full h-full object-cover">'
+            : '<div class="w-full h-full flex items-center justify-center text-3xl bg-green-100">👤</div>';
+          html += '<div class="card bg-white rounded-2xl p-6 text-center border-b-4 border-green-700 shadow-sm hover:shadow-xl transition-all">' +
+            '<div class="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-yellow-400">' + avatar + '</div>' +
+            '<h3 class="font-bold text-xl text-gray-800">' + (f.name || '') + '</h3>' +
+            '<p class="text-green-700 text-sm font-semibold">' + (f.role || '') + '</p>' +
+            '<p class="text-gray-500 text-xs mt-2 italic">' + (f.batch || '') + '</p></div>';
+        });
+        grid.innerHTML = html;
+      }).catch(function(err) {
+        document.getElementById('founders-loading').style.display = 'none';
+        document.getElementById('founders-empty').classList.remove('hidden');
+        document.getElementById('founders-empty').innerHTML = '<div class="text-5xl mb-3">⚠️</div><p class="text-red-500 font-bold">লোড করতে সমস্যা হয়েছে</p><p class="text-gray-500 text-sm mt-1">' + err.message + '</p>';
+      });
+    }
+    loadFounders();
+
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
     });
 
     var darkToggle = document.getElementById('darkToggle');
@@ -85,7 +124,5 @@
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
-  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
-
 </body>
 </html>
