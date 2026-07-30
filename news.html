@@ -15,16 +15,27 @@
 
   <button class="dark-toggle" id="darkToggle">🌙</button>
 
-  <nav class="sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex flex-wrap justify-center items-center gap-4">
-        <a href="index.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Home</a>
-        <a href="notices.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Notices</a>
-        <a href="events.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Events</a>
-        <a href="news.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">News</a>
-        <a href="gallery.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Gallery</a>
-        <a href="contact.html" class="text-yellow-400 hover:text-white font-medium text-sm px-3 py-1">Contact</a>
-        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
       </div>
     </div>
   </nav>
@@ -69,11 +80,8 @@
 
   <script src="firebase-config.js"></script>
   <script>
-    console.log('News page loaded');
-
     db.collection('news').get()
       .then(function(snapshot) {
-        console.log('News snapshot size:', snapshot.size);
         document.getElementById('loading').style.display = 'none';
 
         if (snapshot.empty) {
@@ -108,7 +116,6 @@
         list.innerHTML = html;
       })
       .catch(function(err) {
-        console.error('Error:', err);
         document.getElementById('loading').style.display = 'none';
         document.getElementById('empty').classList.remove('hidden');
         document.getElementById('empty').innerHTML = '<div class="text-6xl mb-3">⚠️</div><p class="text-red-500 text-lg font-bold">Error!</p><p class="text-gray-500 text-sm mt-2">' + err.message + '</p>';
@@ -132,6 +139,17 @@
       document.getElementById('detail-modal').classList.remove('open');
     }
 
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
     var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') {
       document.body.classList.add('dark-mode');
@@ -143,6 +161,7 @@
       darkToggle.textContent = isDark ? '☀️' : '🌙';
       localStorage.setItem('darkMode', isDark);
     });
+    document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
 </body>
 </html>
