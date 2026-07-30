@@ -7,24 +7,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="h-full smooth-scroll bg-white">
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
-  <nav class="sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex flex-wrap justify-center items-center gap-4">
-        <a href="index.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
-        <a href="about.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
-        <a href="activities.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
-        <a href="committee.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Committee</a>
-        <a href="founders.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Founders</a>
-        <a href="gallery.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
-        <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
-        <a href="contact.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
-        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
-        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
       </div>
     </div>
   </nav>
@@ -38,49 +49,14 @@
     <div class="max-w-6xl mx-auto px-6">
       <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Executive Committee</h2>
       <div class="section-divider"></div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="committee-card">
-          <img src="president.jpg" class="committee-avatar object-cover" alt="President">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">President</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Leading the club with vision and dedication</p>
-        </div>
-        <div class="committee-card">
-          <img src="vice president.jpg" class="committee-avatar object-cover" alt="Vice President">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">Vice President</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Supporting operations and programs</p>
-        </div>
-        <div class="committee-card">
-          <img src="general secretary.jpg" class="committee-avatar object-cover" alt="General Secretary">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">General Secretary</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Managing administration and coordination</p>
-        </div>
-        <div class="committee-card">
-          <img src="treasure.jpg" class="committee-avatar object-cover" alt="Treasurer">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">Treasurer</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Overseeing financial matters</p>
-        </div>
-        <div class="committee-card">
-          <img src="da'wah secretary.jpg" class="committee-avatar object-cover" alt="Da'wah Secretary">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">Da'wah Secretary</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Coordinating Islamic outreach activities</p>
-        </div>
-        <div class="committee-card">
-          <img src="hall da'wah secretary.jpg" class="committee-avatar object-cover" alt="Hall Da'wah Secretary">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">Hall Da'wah Secretary</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Coordinating Islamic outreach activities in hall</p>
-        </div>
-        <div class="committee-card">
-          <img src="cultural secretary.jpg" class="committee-avatar object-cover" alt="Cultural Secretary">
-          <h3 class="font-bold text-xl text-gray-800 mb-1">Cultural Secretary</h3>
-          <p class="text-green-700 font-medium text-sm mb-2">Name Here</p>
-          <p class="text-gray-600 text-xs">Organizing cultural events and programs</p>
-        </div>
+
+      <div id="committee-loading" class="text-center py-8">
+        <div class="animate-spin h-10 w-10 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+      </div>
+      <div id="committee-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <div id="committee-empty" class="hidden text-center py-12">
+        <div class="text-5xl mb-3">👥</div>
+        <p class="text-gray-500">কমিটির তথ্য এখনো যোগ করা হয়নি</p>
       </div>
     </div>
   </section>
@@ -96,7 +72,50 @@
 
   <button id="backToTop" title="Back to Top">↑</button>
 
+  <script src="firebase-config.js"></script>
   <script>
+    function loadCommittee() {
+      db.collection('committee').get().then(function(snapshot) {
+        document.getElementById('committee-loading').style.display = 'none';
+        if (snapshot.empty) {
+          document.getElementById('committee-empty').classList.remove('hidden');
+          return;
+        }
+        var items = [];
+        snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        items.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+
+        var grid = document.getElementById('committee-grid');
+        var html = '';
+        items.forEach(function(d) {
+          var avatar = d.photo
+            ? '<img src="' + d.photo + '" class="committee-avatar object-cover" alt="' + (d.name || '') + '">'
+            : '<div class="committee-avatar" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">👤</div>';
+          html += '<div class="committee-card">' + avatar +
+            '<h3 class="font-bold text-xl text-gray-800 mb-1">' + (d.role || '') + '</h3>' +
+            '<p class="text-green-700 font-medium text-sm mb-2">' + (d.name || '') + '</p>' +
+            '<p class="text-gray-600 text-xs">' + (d.description || '') + '</p></div>';
+        });
+        grid.innerHTML = html;
+      }).catch(function(err) {
+        document.getElementById('committee-loading').style.display = 'none';
+        document.getElementById('committee-empty').classList.remove('hidden');
+        document.getElementById('committee-empty').innerHTML = '<div class="text-5xl mb-3">⚠️</div><p class="text-red-500 font-bold">লোড করতে সমস্যা হয়েছে</p><p class="text-gray-500 text-sm mt-1">' + err.message + '</p>';
+      });
+    }
+    loadCommittee();
+
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
     var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
     darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
@@ -105,6 +124,5 @@
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
-  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
 </body>
 </html>
