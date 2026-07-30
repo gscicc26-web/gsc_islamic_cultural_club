@@ -49,6 +49,8 @@
         <button class="admin-nav-item" onclick="showSection('events', this)"><span>📅</span> Events</button>
         <button class="admin-nav-item" onclick="showSection('news', this)"><span>📰</span> News</button>
         <button class="admin-nav-item" onclick="showSection('gallery', this)"><span>🖼️</span> Gallery</button>
+        <button class="admin-nav-item" onclick="showSection('committee', this)"><span>👔</span> Committee</button>
+        <button class="admin-nav-item" onclick="showSection('founders', this)"><span>🌟</span> Founders</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Members</div>
         <button class="admin-nav-item" onclick="showSection('members', this)"><span>👥</span> Members</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Notice & Settings</div>
@@ -109,6 +111,24 @@
           <table class="data-table">
             <thead><tr><th>Image</th><th>Caption</th><th>Actions</th></tr></thead>
             <tbody id="gallery-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="section-committee" class="admin-section hidden">
+        <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="committee-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="section-founders" class="admin-section hidden">
+        <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Batch</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody id="founders-table"></tbody>
           </table>
         </div>
       </section>
@@ -245,6 +265,44 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="committee-modal">
+    <div class="modal-box p-6">
+      <button class="modal-close-btn" onclick="closeFormModal('committee')">✕</button>
+      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">👔 <span id="committee-modal-title">Add Committee Member</span></h2>
+      <input type="hidden" id="committee-id">
+      <div class="space-y-3">
+        <input type="text" id="committee-name" class="gsc-input" placeholder="Name *">
+        <input type="text" id="committee-role" class="gsc-input" placeholder="Role * (e.g. President)">
+        <textarea id="committee-desc" class="gsc-input" rows="2" placeholder="Short description"></textarea>
+        <input type="number" id="committee-order" class="gsc-input" placeholder="Order (ছোট সংখ্যা আগে দেখাবে, যেমন 1, 2, 3...)">
+        <input type="file" id="committee-photo-file" accept="image/*" onchange="handleImageUpload(this, 'committee-photo')" class="gsc-input">
+        <div id="committee-photo-status" class="text-sm hidden"></div>
+        <img id="committee-photo-preview" class="max-h-32 rounded-lg hidden">
+        <input type="hidden" id="committee-photo">
+        <button onclick="saveCommittee()" id="committee-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="founders-modal">
+    <div class="modal-box p-6">
+      <button class="modal-close-btn" onclick="closeFormModal('founders')">✕</button>
+      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">🌟 <span id="founders-modal-title">Add Founder</span></h2>
+      <input type="hidden" id="founders-id">
+      <div class="space-y-3">
+        <input type="text" id="founders-name" class="gsc-input" placeholder="Name *">
+        <input type="text" id="founders-role" class="gsc-input" placeholder="Role * (e.g. Chief Founder, Co-Founder)">
+        <input type="text" id="founders-batch" class="gsc-input" placeholder="Batch (e.g. Batch 2026)">
+        <input type="number" id="founders-order" class="gsc-input" placeholder="Order (ছোট সংখ্যা আগে দেখাবে)">
+        <input type="file" id="founders-photo-file" accept="image/*" onchange="handleImageUpload(this, 'founders-photo')" class="gsc-input">
+        <div id="founders-photo-status" class="text-sm hidden"></div>
+        <img id="founders-photo-preview" class="max-h-32 rounded-lg hidden">
+        <input type="hidden" id="founders-photo">
+        <button onclick="saveFounder()" id="founders-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save</button>
+      </div>
+    </div>
+  </div>
+
   <div class="gsc-toast" id="toast">
     <span id="toast-icon">✅</span>
     <span id="toast-msg"></span>
@@ -301,7 +359,7 @@
       document.getElementById('section-' + section).classList.remove('hidden');
       document.querySelectorAll('.admin-nav-item').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
+      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', committee: 'Committee', founders: 'Founders', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
       document.getElementById('page-title').textContent = titles[section];
 
       var actions = document.getElementById('topbar-actions');
@@ -309,6 +367,8 @@
       else if (section === 'events') actions.innerHTML = '<button onclick="openEventForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Event</button>';
       else if (section === 'news') actions.innerHTML = '<button onclick="openNewsForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add News</button>';
       else if (section === 'gallery') actions.innerHTML = '<button onclick="openGalleryForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Image</button>';
+      else if (section === 'committee') actions.innerHTML = '<button onclick="openCommitteeForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Member</button>';
+      else if (section === 'founders') actions.innerHTML = '<button onclick="openFoundersForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Founder</button>';
       else if (section === 'members') actions.innerHTML = '<button onclick="downloadMembersCSV()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">⬇️ Export CSV</button>';
       else actions.innerHTML = '';
 
@@ -316,6 +376,8 @@
       if (section === 'events') loadEventsAdmin();
       if (section === 'news') loadNewsAdmin();
       if (section === 'gallery') loadGalleryAdmin();
+      if (section === 'committee') loadCommitteeAdmin();
+      if (section === 'founders') loadFoundersAdmin();
       if (section === 'members') loadMembersAdmin();
       if (section === 'popup') loadPopupSettings();
       if (section === 'settings') loadSettings();
@@ -570,6 +632,134 @@
       }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
+    // ================= COMMITTEE =================
+    function openCommitteeForm(id) {
+      document.getElementById('committee-modal-title').textContent = id ? 'Edit Committee Member' : 'Add Committee Member';
+      document.getElementById('committee-id').value = id || '';
+      document.getElementById('committee-photo-preview').classList.add('hidden');
+      document.getElementById('committee-photo-status').classList.add('hidden');
+      document.getElementById('committee-photo').value = '';
+      document.getElementById('committee-photo-file').value = '';
+      if (id) {
+        db.collection('committee').doc(id).get().then(function(doc) {
+          var d = doc.data();
+          document.getElementById('committee-name').value = d.name || '';
+          document.getElementById('committee-role').value = d.role || '';
+          document.getElementById('committee-desc').value = d.description || '';
+          document.getElementById('committee-order').value = d.order != null ? d.order : '';
+          document.getElementById('committee-photo').value = d.photo || '';
+          if (d.photo) { document.getElementById('committee-photo-preview').src = d.photo; document.getElementById('committee-photo-preview').classList.remove('hidden'); }
+        });
+      } else {
+        ['committee-name', 'committee-role', 'committee-desc', 'committee-order'].forEach(function(i) { document.getElementById(i).value = ''; });
+      }
+      document.getElementById('committee-modal').classList.add('open');
+    }
+
+    function saveCommittee() {
+      var id = document.getElementById('committee-id').value;
+      var data = {
+        name: document.getElementById('committee-name').value.trim(),
+        role: document.getElementById('committee-role').value.trim(),
+        description: document.getElementById('committee-desc').value.trim(),
+        order: parseInt(document.getElementById('committee-order').value) || 0,
+        photo: document.getElementById('committee-photo').value
+      };
+      if (!data.name || !data.role) { showToast('Name ও Role দিন!', 'error'); return; }
+
+      var btn = document.getElementById('committee-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
+      var promise = id ? db.collection('committee').doc(id).update(data) : db.collection('committee').add(data);
+      promise.then(function() {
+        showToast('Committee member সেভ হয়েছে! ✅');
+        closeFormModal('committee');
+        loadCommitteeAdmin();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
+      });
+    }
+
+    function loadCommitteeAdmin() {
+      db.collection('committee').get().then(function(snap) {
+        var items = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        items.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+        var html = '';
+        items.forEach(function(d) {
+          var img = d.photo ? '<img src="' + d.photo + '" style="width:50px;height:50px;object-fit:cover;border-radius:50%">' : '👤';
+          html += '<tr><td>' + img + '</td><td>' + d.name + '</td><td>' + d.role + '</td><td>' + (d.order != null ? d.order : '-') + '</td><td><button onclick="openCommitteeForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteItem(\'committee\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
+        });
+        document.getElementById('committee-table').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af">কোনো সদস্য নেই</td></tr>';
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
+    // ================= FOUNDERS =================
+    function openFoundersForm(id) {
+      document.getElementById('founders-modal-title').textContent = id ? 'Edit Founder' : 'Add Founder';
+      document.getElementById('founders-id').value = id || '';
+      document.getElementById('founders-photo-preview').classList.add('hidden');
+      document.getElementById('founders-photo-status').classList.add('hidden');
+      document.getElementById('founders-photo').value = '';
+      document.getElementById('founders-photo-file').value = '';
+      if (id) {
+        db.collection('founders').doc(id).get().then(function(doc) {
+          var d = doc.data();
+          document.getElementById('founders-name').value = d.name || '';
+          document.getElementById('founders-role').value = d.role || '';
+          document.getElementById('founders-batch').value = d.batch || '';
+          document.getElementById('founders-order').value = d.order != null ? d.order : '';
+          document.getElementById('founders-photo').value = d.photo || '';
+          if (d.photo) { document.getElementById('founders-photo-preview').src = d.photo; document.getElementById('founders-photo-preview').classList.remove('hidden'); }
+        });
+      } else {
+        ['founders-name', 'founders-role', 'founders-batch', 'founders-order'].forEach(function(i) { document.getElementById(i).value = ''; });
+      }
+      document.getElementById('founders-modal').classList.add('open');
+    }
+
+    function saveFounder() {
+      var id = document.getElementById('founders-id').value;
+      var data = {
+        name: document.getElementById('founders-name').value.trim(),
+        role: document.getElementById('founders-role').value.trim(),
+        batch: document.getElementById('founders-batch').value.trim(),
+        order: parseInt(document.getElementById('founders-order').value) || 0,
+        photo: document.getElementById('founders-photo').value
+      };
+      if (!data.name || !data.role) { showToast('Name ও Role দিন!', 'error'); return; }
+
+      var btn = document.getElementById('founders-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
+      var promise = id ? db.collection('founders').doc(id).update(data) : db.collection('founders').add(data);
+      promise.then(function() {
+        showToast('Founder সেভ হয়েছে! ✅');
+        closeFormModal('founders');
+        loadFoundersAdmin();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save';
+      });
+    }
+
+    function loadFoundersAdmin() {
+      db.collection('founders').get().then(function(snap) {
+        var items = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        items.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+        var html = '';
+        items.forEach(function(d) {
+          var img = d.photo ? '<img src="' + d.photo + '" style="width:50px;height:50px;object-fit:cover;border-radius:50%">' : '👤';
+          html += '<tr><td>' + img + '</td><td>' + d.name + '</td><td>' + d.role + '</td><td>' + (d.batch || '-') + '</td><td>' + (d.order != null ? d.order : '-') + '</td><td><button onclick="openFoundersForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteItem(\'founders\',\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
+        });
+        document.getElementById('founders-table').innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af">কোনো ফাউন্ডার নেই</td></tr>';
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
     // ================= MEMBERS =================
     function loadMembersAdmin() {
       db.collection('members').get().then(function(snap) {
@@ -687,6 +877,8 @@
         if (collection === 'events') loadEventsAdmin();
         if (collection === 'news') loadNewsAdmin();
         if (collection === 'gallery') loadGalleryAdmin();
+        if (collection === 'committee') loadCommitteeAdmin();
+        if (collection === 'founders') loadFoundersAdmin();
         loadDashboard();
       }).catch(function(err) {
         showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
