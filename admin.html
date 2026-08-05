@@ -819,8 +819,8 @@
     function blankQuestion() {
       return { id: 'q' + Date.now() + Math.floor(Math.random() * 10000), text: '', type: 'short', required: true, options: ['', ''], correct: [], marks: 1 };
     }
-    function blankStep() {
-      return { title: 'ধাপ ' + (builderData.steps.length + 1), questions: [blankQuestion()] };
+    function blankStep(n) {
+      return { title: 'ধাপ ' + (n || 1), questions: [blankQuestion()] };
     }
 
     function openFormBuilder(id) {
@@ -832,13 +832,13 @@
           builderData = {
             title: d.title || '', description: d.description || '', type: d.type || 'registration',
             timeLimit: d.timeLimit || 10, active: d.active || false,
-            steps: (d.steps && d.steps.length) ? d.steps : [blankStep()]
+            steps: (d.steps && d.steps.length) ? d.steps : [blankStep(1)]
           };
           fillBuilderHeader();
           renderBuilder();
         });
       } else {
-        builderData = { title: '', description: '', type: 'registration', timeLimit: 10, active: false, steps: [blankStep()] };
+        builderData = { title: '', description: '', type: 'registration', timeLimit: 10, active: false, steps: [blankStep(1)] };
         fillBuilderHeader();
         renderBuilder();
       }
@@ -865,7 +865,7 @@
     }
 
     function addStep() {
-      builderData.steps.push(blankStep());
+      builderData.steps.push(blankStep(builderData.steps.length + 1));
       renderBuilder();
     }
     function removeStep(si) {
