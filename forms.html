@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Forms & Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="h-full smooth-scroll bg-gray-50">
+
+  <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="forms.html">📝 Forms & Quiz</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gradient-bg islamic-pattern py-12 text-center text-white">
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">📝 Forms & Quiz</h1>
+    <p class="opacity-80">ফরম পূরণ করুন অথবা কুইজে অংশ নিন</p>
+  </div>
+
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-6">
+
+      <div id="forms-loading" class="text-center py-8">
+        <div class="animate-spin h-12 w-12 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+        <p class="text-gray-500 mt-3">লোড হচ্ছে...</p>
+      </div>
+
+      <div id="forms-list" class="grid md:grid-cols-2 gap-5"></div>
+
+      <div id="forms-empty" class="hidden text-center py-12">
+        <div class="text-6xl mb-3">📭</div>
+        <p class="text-gray-500 text-lg">এখন কোনো ফরম বা কুইজ চালু নেই</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-white py-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, তেজগাঁও, ঢাকা।</p>
+      <hr class="border-gray-700 mb-6">
+      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/GSC73</span></p>
+    </div>
+  </footer>
+
+  <script src="firebase-config.js"></script>
+  <script>
+    db.collection('forms').where('active', '==', true).get().then(function(snapshot) {
+      document.getElementById('forms-loading').style.display = 'none';
+      if (snapshot.empty) {
+        document.getElementById('forms-empty').classList.remove('hidden');
+        return;
+      }
+      var items = [];
+      snapshot.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+
+      var list = document.getElementById('forms-list');
+      var html = '';
+      items.forEach(function(d) {
+        var isQuiz = d.type === 'quiz';
+        var badge = isQuiz ? '<span class="badge" style="background:#ede9fe;color:#5b21b6;">🧠 QUIZ</span>' : '<span class="badge badge-general">📋 FORM</span>';
+        var meta = isQuiz ? '<p class="text-xs text-gray-500 mt-2">⏱️ সময়সীমা: ' + (d.timeLimit || 10) + ' মিনিট</p>' : '';
+        html += '<a href="form-fill.html?id=' + d.id + '" class="feature-card p-6 block">' +
+          badge +
+          '<h3 class="font-bold text-xl text-gray-800 mt-3 mb-2">' + (d.title || '') + '</h3>' +
+          '<p class="text-gray-600 text-sm">' + (d.description || '') + '</p>' +
+          meta +
+          '<span class="inline-block mt-4 text-green-700 font-bold text-sm">শুরু করুন →</span></a>';
+      });
+      list.innerHTML = html;
+    }).catch(function(err) {
+      document.getElementById('forms-loading').style.display = 'none';
+      document.getElementById('forms-empty').classList.remove('hidden');
+      document.getElementById('forms-empty').innerHTML = '<div class="text-6xl mb-3">⚠️</div><p class="text-red-500 font-bold">লোড করতে সমস্যা হয়েছে</p><p class="text-gray-500 text-sm mt-1">' + err.message + '</p>';
+    });
+
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    var darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
+    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+    document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
+  </script>
+</body>
+</html>
