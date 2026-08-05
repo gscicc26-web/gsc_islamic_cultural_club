@@ -51,6 +51,7 @@
         <button class="admin-nav-item" onclick="showSection('gallery', this)"><span>🖼️</span> Gallery</button>
         <button class="admin-nav-item" onclick="showSection('committee', this)"><span>👔</span> Committee</button>
         <button class="admin-nav-item" onclick="showSection('founders', this)"><span>🌟</span> Founders</button>
+        <button class="admin-nav-item" onclick="showSection('forms', this)"><span>📝</span> Forms/Quiz</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Members</div>
         <button class="admin-nav-item" onclick="showSection('members', this)"><span>👥</span> Members</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Notice & Settings</div>
@@ -129,6 +130,15 @@
           <table class="data-table">
             <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Batch</th><th>Order</th><th>Actions</th></tr></thead>
             <tbody id="founders-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="section-forms" class="admin-section hidden">
+        <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Responses</th><th>Actions</th></tr></thead>
+            <tbody id="forms-table"></tbody>
           </table>
         </div>
       </section>
@@ -303,6 +313,44 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="formbuilder-modal">
+    <div class="modal-box p-6" style="max-width:900px;">
+      <button class="modal-close-btn" onclick="closeFormBuilder()">✕</button>
+      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">📝 <span id="formbuilder-title">Create Form</span></h2>
+
+      <div class="space-y-3 mb-6 pb-6" style="border-bottom:2px solid #f3f4f6;">
+        <input type="text" id="fb-title" class="gsc-input" placeholder="Form Title * (যেমন: সদস্য জরিপ, বিজ্ঞান কুইজ)" oninput="builderData.title=this.value">
+        <textarea id="fb-desc" class="gsc-input" rows="2" placeholder="Description (ঐচ্ছিক)" oninput="builderData.description=this.value"></textarea>
+        <div class="flex gap-4 flex-wrap items-center">
+          <label class="flex items-center gap-2"><input type="radio" name="fb-type" value="registration" onchange="setFormType('registration')"> 📋 Registration Form</label>
+          <label class="flex items-center gap-2"><input type="radio" name="fb-type" value="quiz" onchange="setFormType('quiz')"> 🧠 Quiz (Timer + Score)</label>
+          <div id="fb-timelimit-wrap" class="hidden flex items-center gap-2">
+            <label class="text-sm">⏱️ Time Limit (মিনিট):</label>
+            <input type="number" id="fb-timelimit" class="gsc-input" style="width:90px" min="1" value="10" oninput="builderData.timeLimit=parseInt(this.value)||10">
+          </div>
+        </div>
+      </div>
+
+      <div id="builder-steps" class="space-y-5"></div>
+
+      <button onclick="addStep()" class="w-full border-2 border-dashed border-green-400 text-green-700 font-bold py-3 rounded-lg hover:bg-green-50 mt-4">➕ নতুন ধাপ (Step) যোগ করুন</button>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeFormBuilder()" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300">বাতিল</button>
+        <button onclick="saveForm()" id="fb-save-btn" class="flex-1 bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save Form</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="responses-modal">
+    <div class="modal-box p-6">
+      <button class="modal-close-btn" onclick="closeFormModal('responses')">✕</button>
+      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">📊 <span id="responses-title">Responses</span></h2>
+      <div id="responses-summary" class="mb-4"></div>
+      <button onclick="downloadResponsesCSV()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 mb-2">⬇️ Download CSV</button>
+    </div>
+  </div>
+
   <div class="gsc-toast" id="toast">
     <span id="toast-icon">✅</span>
     <span id="toast-msg"></span>
@@ -359,7 +407,7 @@
       document.getElementById('section-' + section).classList.remove('hidden');
       document.querySelectorAll('.admin-nav-item').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', committee: 'Committee', founders: 'Founders', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
+      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', committee: 'Committee', founders: 'Founders', forms: 'Forms/Quiz', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
       document.getElementById('page-title').textContent = titles[section];
 
       var actions = document.getElementById('topbar-actions');
@@ -369,6 +417,7 @@
       else if (section === 'gallery') actions.innerHTML = '<button onclick="openGalleryForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Image</button>';
       else if (section === 'committee') actions.innerHTML = '<button onclick="openCommitteeForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Member</button>';
       else if (section === 'founders') actions.innerHTML = '<button onclick="openFoundersForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Founder</button>';
+      else if (section === 'forms') actions.innerHTML = '<button onclick="openFormBuilder()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Create Form</button>';
       else if (section === 'members') actions.innerHTML = '<button onclick="downloadMembersCSV()" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">⬇️ Export CSV</button>';
       else actions.innerHTML = '';
 
@@ -378,6 +427,7 @@
       if (section === 'gallery') loadGalleryAdmin();
       if (section === 'committee') loadCommitteeAdmin();
       if (section === 'founders') loadFoundersAdmin();
+      if (section === 'forms') loadFormsAdmin();
       if (section === 'members') loadMembersAdmin();
       if (section === 'popup') loadPopupSettings();
       if (section === 'settings') loadSettings();
@@ -758,6 +808,291 @@
         });
         document.getElementById('founders-table').innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af">কোনো ফাউন্ডার নেই</td></tr>';
       }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
+    // ================= FORMS / QUIZ BUILDER =================
+    var builderData = null;
+    var editingFormId = '';
+    var currentResponsesFormId = '';
+    var currentResponsesData = [];
+
+    function blankQuestion() {
+      return { id: 'q' + Date.now() + Math.floor(Math.random() * 10000), text: '', type: 'short', required: true, options: ['', ''], correct: [], marks: 1 };
+    }
+    function blankStep() {
+      return { title: 'ধাপ ' + (builderData.steps.length + 1), questions: [blankQuestion()] };
+    }
+
+    function openFormBuilder(id) {
+      editingFormId = id || '';
+      document.getElementById('formbuilder-title').textContent = id ? 'Edit Form' : 'Create Form';
+      if (id) {
+        db.collection('forms').doc(id).get().then(function(doc) {
+          var d = doc.data();
+          builderData = {
+            title: d.title || '', description: d.description || '', type: d.type || 'registration',
+            timeLimit: d.timeLimit || 10, active: d.active || false,
+            steps: (d.steps && d.steps.length) ? d.steps : [blankStep()]
+          };
+          fillBuilderHeader();
+          renderBuilder();
+        });
+      } else {
+        builderData = { title: '', description: '', type: 'registration', timeLimit: 10, active: false, steps: [blankStep()] };
+        fillBuilderHeader();
+        renderBuilder();
+      }
+      document.getElementById('formbuilder-modal').classList.add('open');
+    }
+
+    function fillBuilderHeader() {
+      document.getElementById('fb-title').value = builderData.title;
+      document.getElementById('fb-desc').value = builderData.description;
+      document.getElementById('fb-timelimit').value = builderData.timeLimit;
+      document.querySelectorAll('input[name="fb-type"]').forEach(function(r) { r.checked = (r.value === builderData.type); });
+      document.getElementById('fb-timelimit-wrap').classList.toggle('hidden', builderData.type !== 'quiz');
+    }
+
+    function setFormType(type) {
+      builderData.type = type;
+      document.getElementById('fb-timelimit-wrap').classList.toggle('hidden', type !== 'quiz');
+      renderBuilder();
+    }
+
+    function closeFormBuilder() {
+      document.getElementById('formbuilder-modal').classList.remove('open');
+      builderData = null;
+    }
+
+    function addStep() {
+      builderData.steps.push(blankStep());
+      renderBuilder();
+    }
+    function removeStep(si) {
+      if (builderData.steps.length <= 1) { showToast('কমপক্ষে একটা ধাপ থাকতে হবে!', 'error'); return; }
+      if (!confirm('এই ধাপটা মুছে ফেলবেন?')) return;
+      builderData.steps.splice(si, 1);
+      renderBuilder();
+    }
+    function addQuestion(si) {
+      builderData.steps[si].questions.push(blankQuestion());
+      renderBuilder();
+    }
+    function removeQuestion(si, qi) {
+      builderData.steps[si].questions.splice(qi, 1);
+      renderBuilder();
+    }
+    function addOption(si, qi) {
+      builderData.steps[si].questions[qi].options.push('');
+      renderBuilder();
+    }
+    function removeOption(si, qi, oi) {
+      builderData.steps[si].questions[qi].options.splice(oi, 1);
+      var q = builderData.steps[si].questions[qi];
+      q.correct = q.correct.filter(function(c) { return c !== oi; }).map(function(c) { return c > oi ? c - 1 : c; });
+      renderBuilder();
+    }
+    function toggleCorrect(si, qi, oi, isCheckbox) {
+      var q = builderData.steps[si].questions[qi];
+      if (isCheckbox) {
+        var idx = q.correct.indexOf(oi);
+        if (idx > -1) q.correct.splice(idx, 1); else q.correct.push(oi);
+      } else {
+        q.correct = [oi];
+      }
+    }
+
+    function renderBuilder() {
+      var html = '';
+      builderData.steps.forEach(function(step, si) {
+        html += '<div style="border:2px solid #e5e7eb;border-radius:12px;padding:16px;">';
+        html += '<div class="flex items-center gap-2 mb-3">' +
+          '<input type="text" class="gsc-input" style="font-weight:700;flex:1" value="' + escAttr(step.title) + '" oninput="builderData.steps[' + si + '].title=this.value" placeholder="ধাপের শিরোনাম">' +
+          '<button onclick="removeStep(' + si + ')" style="color:#dc2626;padding:6px 10px;">🗑️ ধাপ মুছুন</button></div>';
+
+        step.questions.forEach(function(q, qi) {
+          html += '<div style="background:#f9fafb;border-radius:10px;padding:14px;margin-bottom:10px;">';
+          html += '<div class="flex gap-2 mb-2">' +
+            '<input type="text" class="gsc-input" style="flex:1" placeholder="প্রশ্ন লিখুন *" value="' + escAttr(q.text) + '" oninput="builderData.steps[' + si + '].questions[' + qi + '].text=this.value">' +
+            '<button onclick="removeQuestion(' + si + ',' + qi + ')" style="color:#dc2626;padding:6px 10px;">🗑️</button></div>';
+
+          html += '<div class="flex gap-3 flex-wrap items-center mb-2">';
+          html += '<select class="gsc-input" style="width:auto" onchange="builderData.steps[' + si + '].questions[' + qi + '].type=this.value;renderBuilder();">';
+          [['short', 'Short Answer'], ['paragraph', 'Paragraph'], ['mcq', 'Multiple Choice'], ['checkbox', 'Checkboxes'], ['dropdown', 'Dropdown']].forEach(function(t) {
+            html += '<option value="' + t[0] + '"' + (q.type === t[0] ? ' selected' : '') + '>' + t[1] + '</option>';
+          });
+          html += '</select>';
+          html += '<label class="text-sm flex items-center gap-1"><input type="checkbox" ' + (q.required ? 'checked' : '') + ' onchange="builderData.steps[' + si + '].questions[' + qi + '].required=this.checked"> আবশ্যক</label>';
+          if (builderData.type === 'quiz' && (q.type === 'mcq' || q.type === 'checkbox' || q.type === 'dropdown')) {
+            html += '<label class="text-sm flex items-center gap-1">নম্বর: <input type="number" class="gsc-input" style="width:60px" min="0" value="' + q.marks + '" oninput="builderData.steps[' + si + '].questions[' + qi + '].marks=parseInt(this.value)||0"></label>';
+          }
+          html += '</div>';
+
+          if (q.type === 'mcq' || q.type === 'checkbox' || q.type === 'dropdown') {
+            html += '<div class="space-y-2 pl-2">';
+            q.options.forEach(function(opt, oi) {
+              var isCorrect = q.correct.indexOf(oi) > -1;
+              html += '<div class="flex items-center gap-2">';
+              if (builderData.type === 'quiz') {
+                html += '<input type="' + (q.type === 'checkbox' ? 'checkbox' : 'radio') + '" name="correct-' + si + '-' + qi + '" ' + (isCorrect ? 'checked' : '') + ' onchange="toggleCorrect(' + si + ',' + qi + ',' + oi + ',' + (q.type === 'checkbox') + ')" title="সঠিক উত্তর">';
+              }
+              html += '<input type="text" class="gsc-input" style="flex:1" placeholder="অপশন ' + (oi + 1) + '" value="' + escAttr(opt) + '" oninput="builderData.steps[' + si + '].questions[' + qi + '].options[' + oi + ']=this.value">';
+              html += '<button onclick="removeOption(' + si + ',' + qi + ',' + oi + ')" style="color:#dc2626;">✕</button></div>';
+            });
+            html += '<button onclick="addOption(' + si + ',' + qi + ')" style="color:#16a34a;font-size:0.85rem;font-weight:600;">+ অপশন যোগ করুন</button>';
+            html += '</div>';
+          }
+          html += '</div>';
+        });
+
+        html += '<button onclick="addQuestion(' + si + ')" style="color:#16a34a;font-weight:700;font-size:0.9rem;">+ প্রশ্ন যোগ করুন</button>';
+        html += '</div>';
+      });
+      document.getElementById('builder-steps').innerHTML = html;
+    }
+
+    function escAttr(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    function saveForm() {
+      if (!builderData.title.trim()) { showToast('Form Title দিন!', 'error'); return; }
+      for (var si = 0; si < builderData.steps.length; si++) {
+        for (var qi = 0; qi < builderData.steps[si].questions.length; qi++) {
+          var q = builderData.steps[si].questions[qi];
+          if (!q.text.trim()) { showToast('প্রতিটা প্রশ্নের লেখা দিতে হবে! (ধাপ ' + (si + 1) + ')', 'error'); return; }
+          if ((q.type === 'mcq' || q.type === 'checkbox' || q.type === 'dropdown') && q.options.filter(function(o) { return o.trim(); }).length < 2) {
+            showToast('কমপক্ষে ২টা অপশন দিতে হবে! (ধাপ ' + (si + 1) + ')', 'error'); return;
+          }
+        }
+      }
+
+      var btn = document.getElementById('fb-save-btn');
+      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
+
+      var data = {
+        title: builderData.title.trim(),
+        description: builderData.description.trim(),
+        type: builderData.type,
+        timeLimit: builderData.timeLimit,
+        active: builderData.active || false,
+        steps: builderData.steps,
+        updatedAt: new Date().toISOString()
+      };
+      if (!editingFormId) data.createdAt = new Date().toISOString();
+
+      var promise = editingFormId ? db.collection('forms').doc(editingFormId).update(data) : db.collection('forms').add(data);
+      promise.then(function() {
+        showToast('Form সেভ হয়েছে! ✅');
+        closeFormBuilder();
+        loadFormsAdmin();
+      }).catch(function(err) {
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false; btn.textContent = '💾 Save Form';
+      });
+    }
+
+    function loadFormsAdmin() {
+      db.collection('forms').get().then(function(snap) {
+        var items = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
+        if (items.length === 0) {
+          document.getElementById('forms-table').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af">কোনো ফরম নেই</td></tr>';
+          return;
+        }
+        var html = '';
+        var pending = items.length;
+        items.forEach(function(d) {
+          db.collection('form_responses').where('formId', '==', d.id).get().then(function(rsnap) {
+            var typeLabel = d.type === 'quiz' ? '🧠 Quiz' : '📋 Registration';
+            var statusBadge = d.active ? '<span style="color:#16a34a;font-weight:700">✅ Live</span>' : '<span style="color:#9ca3af;font-weight:700">⏸️ Draft</span>';
+            html += '<tr>' +
+              '<td>' + d.title + '</td>' +
+              '<td>' + typeLabel + '</td>' +
+              '<td>' + statusBadge + '</td>' +
+              '<td>' + rsnap.size + '</td>' +
+              '<td style="white-space:nowrap">' +
+              '<button onclick="openFormBuilder(\'' + d.id + '\')" style="color:#2563eb;margin-right:6px" title="Edit">✏️</button>' +
+              '<button onclick="toggleFormActive(\'' + d.id + '\',' + !d.active + ')" style="color:#16a34a;margin-right:6px" title="Publish/Unpublish">' + (d.active ? '⏸️' : '🚀') + '</button>' +
+              '<button onclick="copyFormLink(\'' + d.id + '\')" style="color:#7c3aed;margin-right:6px" title="Copy Link">🔗</button>' +
+              '<button onclick="openResponses(\'' + d.id + '\',\'' + d.title.replace(/'/g, "\\'") + '\')" style="color:#f59e0b;margin-right:6px" title="Responses">📊</button>' +
+              '<button onclick="deleteFormItem(\'' + d.id + '\')" style="color:#dc2626" title="Delete">🗑️</button>' +
+              '</td></tr>';
+            pending--;
+            if (pending === 0) document.getElementById('forms-table').innerHTML = html;
+          });
+        });
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
+    function toggleFormActive(id, newState) {
+      db.collection('forms').doc(id).update({ active: newState }).then(function() {
+        showToast(newState ? 'Form Publish করা হয়েছে! 🚀' : 'Form Draft-এ নেওয়া হয়েছে');
+        loadFormsAdmin();
+      }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
+    }
+
+    function copyFormLink(id) {
+      var url = window.location.origin + window.location.pathname.replace('admin.html', '') + 'form-fill.html?id=' + id;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function() { showToast('লিংক কপি হয়েছে! 🔗'); });
+      } else {
+        prompt('লিংক কপি করুন:', url);
+      }
+    }
+
+    function deleteFormItem(id) {
+      if (!confirm('এই ফরমটা মুছে ফেলবেন? এর সব রেসপন্সও মুছে যাবে না, শুধু ফরমটা মুছবে।')) return;
+      db.collection('forms').doc(id).delete().then(function() {
+        showToast('Form Deleted!');
+        loadFormsAdmin();
+      }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
+    }
+
+    function openResponses(formId, title) {
+      currentResponsesFormId = formId;
+      document.getElementById('responses-title').textContent = title;
+      document.getElementById('responses-summary').innerHTML = '<p class="text-gray-500">লোড হচ্ছে...</p>';
+      document.getElementById('responses-modal').classList.add('open');
+      db.collection('form_responses').where('formId', '==', formId).get().then(function(snap) {
+        currentResponsesData = [];
+        snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; currentResponsesData.push(d); });
+        var count = currentResponsesData.length;
+        var html = '<p class="mb-2"><strong>মোট রেসপন্স:</strong> ' + count + '</p>';
+        var isQuiz = currentResponsesData.length && currentResponsesData[0].score !== undefined;
+        if (isQuiz && count > 0) {
+          var avg = currentResponsesData.reduce(function(s, r) { return s + (r.percentage || 0); }, 0) / count;
+          html += '<p class="mb-2"><strong>গড় স্কোর:</strong> ' + avg.toFixed(1) + '%</p>';
+        }
+        document.getElementById('responses-summary').innerHTML = html;
+      }).catch(function(err) {
+        document.getElementById('responses-summary').innerHTML = '<p class="text-red-500">লোড এরর: ' + err.message + '</p>';
+      });
+    }
+
+    function downloadResponsesCSV() {
+      if (!currentResponsesData || currentResponsesData.length === 0) { showToast('কোনো রেসপন্স নেই!', 'error'); return; }
+      var allKeys = {};
+      currentResponsesData.forEach(function(r) { Object.keys(r.answers || {}).forEach(function(k) { allKeys[k] = true; }); });
+      var qKeys = Object.keys(allKeys);
+      var headers = ['Submitted At', 'Score %'].concat(qKeys);
+      var csv = headers.map(function(h) { return '"' + h.replace(/"/g, '""') + '"'; }).join(',') + '\n';
+      currentResponsesData.forEach(function(r) {
+        var row = [r.submittedAt ? new Date(r.submittedAt).toLocaleString('bn-BD') : '', r.percentage != null ? r.percentage.toFixed(1) : ''];
+        qKeys.forEach(function(k) {
+          var v = r.answers ? r.answers[k] : '';
+          if (Array.isArray(v)) v = v.join('; ');
+          row.push(v || '');
+        });
+        csv += row.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',') + '\n';
+      });
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'form-responses-' + currentResponsesFormId + '.csv';
+      a.click();
+      showToast('CSV ডাউনলোড হয়েছে! ✅');
     }
 
     // ================= MEMBERS =================
