@@ -3,71 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSCICC | Contact</title>
+  <title>GSCICC | Constitution</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body class="h-full smooth-scroll bg-gray-50">
+<body class="h-full smooth-scroll bg-white">
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
-  <nav class="sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex flex-wrap justify-center items-center gap-4">
-        <a href="index.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
-        <a href="about.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
-        <a href="activities.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
-        <a href="committee.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Committee</a>
-        <a href="founders.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Founders</a>
-        <a href="gallery.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Gallery</a>
-        <a href="constitution.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Constitution</a>
-        <a href="contact.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Contact</a>
-        <a href="signup.html" class="bg-green-600 text-white hover:bg-green-500 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">📝 Sign Up</a>
-        <a href="login.html" class="bg-yellow-400 text-green-900 hover:bg-yellow-300 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🔑 Login</a>
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
       </div>
     </div>
   </nav>
 
   <div class="gradient-bg islamic-pattern py-12 text-center text-white">
-    <h1 class="text-4xl font-bold text-yellow-400 mb-2">Get in Touch</h1>
-    <p class="opacity-80">আমাদের সাথে যোগাযোগ করুন</p>
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">গঠনতন্ত্র</h1>
+    <p class="opacity-80">Government Science College Islamic Cultural Club (GSCICC)</p>
   </div>
 
-  <section class="py-20 bg-gray-50">
+  <section class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-6">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-4">Get in Touch</h2>
-      <div class="section-divider"></div>
-      <div class="grid md:grid-cols-2 gap-12">
-        <div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
-          <div class="space-y-4">
-            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📍</div><div><h4 class="font-semibold text-gray-800">Address</h4><p class="text-gray-600 text-sm">Government Science College<br>Tejgaon, Dhaka-1215</p></div></div>
-            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📧</div><div><h4 class="font-semibold text-gray-800">Email</h4><p class="text-gray-600 text-sm">gscicc26@gmail.com</p></div></div>
-            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">📱</div><div><h4 class="font-semibold text-gray-800">Phone</h4><p class="text-gray-600 text-sm">+880 1932391139</p></div></div>
-            <div class="flex items-start gap-4"><div class="text-2xl text-green-700">🌐</div><div><h4 class="font-semibold text-gray-800">Social Media</h4>
-              <div class="flex gap-5 mt-4">
-                <a href="https://www.facebook.com/share/1Euq3pjgf3/" target="_blank" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="35" height="35" alt="Facebook"></a>
-                <a href="https://m.me/samin987" target="_blank" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968771.png" width="35" height="35" alt="Messenger"></a>
-                <a href="mailto:gscicc26@gmail.com" class="transform hover:scale-110 transition-transform duration-300"><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="35" height="35" alt="Email"></a>
-              </div>
-            </div></div>
-          </div>
+
+      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-10 text-center">
+        <p class="text-yellow-700 text-sm">⚠️ এটি একটি খসড়া গঠনতন্ত্র — চূড়ান্ত অনুমোদনের পূর্ব পর্যন্ত এটি পরিবর্তনযোগ্য।</p>
+      </div>
+
+      <div class="space-y-10 text-gray-700 leading-relaxed">
+
+        <div class="card bg-green-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ১: নাম ও পরিচিতি</h2>
+          <p>এই সংগঠনের নাম হবে <strong>"Government Science College Islamic Cultural Club"</strong> (সংক্ষেপে GSCICC)। এটি সরকারি বিজ্ঞান কলেজ, তেজগাঁও, ঢাকা-এর একটি অরাজনৈতিক, অলাভজনক ইসলামিক ছাত্র সংগঠন।</p>
         </div>
-        <div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h3>
-          <form class="contact-form space-y-4" id="contact-form">
-            <div><input type="text" id="from_name" name="from_name" placeholder="আপনার নাম / Your Name" required></div>
-            <div><input type="email" id="from_email" name="from_email" placeholder="আপনার ইমেইল / Your Email" required></div>
-            <div><textarea id="message" name="message" rows="4" placeholder="আপনার মেসেজ / Your Message" required></textarea></div>
-            <button type="submit" id="submit-btn" class="w-full bg-green-800 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-300 shadow-md flex items-center justify-center gap-2">
-              <span id="btn-text">📩 Send Message</span>
-              <span id="btn-loading" class="hidden flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>পাঠানো হচ্ছে...</span>
-            </button>
-          </form>
-          <div id="form-message" class="mt-4 text-center text-sm font-medium hidden"></div>
+
+        <div class="card bg-yellow-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ২: উদ্দেশ্য</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>শিক্ষার্থীদের মাঝে ইসলামি জ্ঞান, নৈতিকতা ও চরিত্র গঠনে সহায়তা করা।</li>
+            <li>কুরআন-হাদিসের আলোকে দাওয়াতি কার্যক্রম পরিচালনা করা।</li>
+            <li>শিক্ষার্থীদের মাঝে নেতৃত্বের গুণাবলি ও সামাজিক দায়িত্ববোধ গড়ে তোলা।</li>
+            <li>সাংস্কৃতিক ও শিক্ষামূলক অনুষ্ঠান, আলোচনা সভা, প্রতিযোগিতা আয়োজন করা।</li>
+            <li>সামাজিক কল্যাণমূলক কার্যক্রম (যেমন ত্রাণ, রক্তদান, সহায়তা কার্যক্রম) পরিচালনা করা।</li>
+          </ol>
         </div>
+
+        <div class="card bg-green-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৩: সদস্যপদ</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>সরকারি বিজ্ঞান কলেজের যেকোনো নিয়মিত শিক্ষার্থী সদস্যপদের জন্য আবেদন করতে পারবেন।</li>
+            <li>নির্ধারিত রেজিস্ট্রেশন ফর্ম পূরণ করে আবেদন করতে হবে; কার্যনির্বাহী কমিটির অনুমোদন সাপেক্ষে সদস্যপদ কার্যকর হবে।</li>
+            <li>ক্লাবের গঠনতন্ত্র ও নিয়মকানুন মেনে চলা প্রতিটি সদস্যের জন্য বাধ্যতামূলক।</li>
+            <li>সংগঠনবিরোধী বা শৃঙ্খলাভঙ্গকারী কর্মকাণ্ডের জন্য কার্যনির্বাহী কমিটি সদস্যপদ স্থগিত বা বাতিল করতে পারবে।</li>
+          </ol>
+        </div>
+
+        <div class="card bg-yellow-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৪: কার্যনির্বাহী কমিটি</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>কমিটিতে থাকবেন: সভাপতি, সহ-সভাপতি, সাধারণ সম্পাদক, কোষাধ্যক্ষ, দাওয়াহ সম্পাদক, হল দাওয়াহ সম্পাদক, সাংস্কৃতিক সম্পাদক ও অন্যান্য প্রয়োজনীয় পদ।</li>
+            <li>কমিটির মেয়াদ হবে <strong>এক শিক্ষাবর্ষ (১ বছর)</strong>, যা প্রয়োজনে নবায়নযোগ্য।</li>
+            <li>কমিটি সদস্যরা সাধারণ সদস্যদের মতামত ও প্রয়োজন অনুযায়ী সিদ্ধান্ত গ্রহণ করবেন।</li>
+            <li>কোনো পদ শূন্য হলে কার্যনির্বাহী কমিটি অন্তর্বর্তীকালীন সময়ের জন্য নতুন সদস্য মনোনীত করতে পারবে।</li>
+          </ol>
+        </div>
+
+        <div class="card bg-green-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৫: সভা পরিচালনা</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>মাসে অন্তত একবার নিয়মিত কার্যনির্বাহী সভা অনুষ্ঠিত হবে।</li>
+            <li>প্রয়োজনে সাধারণ সদস্যদের নিয়ে বার্ষিক সাধারণ সভা (General Meeting) আহ্বান করা যাবে।</li>
+            <li>সভার সিদ্ধান্ত উপস্থিত সদস্যদের সংখ্যাগরিষ্ঠ মতামতের ভিত্তিতে গৃহীত হবে।</li>
+          </ol>
+        </div>
+
+        <div class="card bg-yellow-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৬: তহবিল</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>সদস্য চাঁদা, অনুদান ও বৈধ মাধ্যমে সংগৃহীত অর্থ দিয়ে ক্লাবের তহবিল পরিচালিত হবে।</li>
+            <li>কোষাধ্যক্ষ সকল আয়-ব্যয়ের হিসাব সংরক্ষণ করবেন এবং প্রয়োজনে কমিটির কাছে উপস্থাপন করবেন।</li>
+            <li>তহবিলের ব্যবহার শুধুমাত্র ক্লাবের ঘোষিত উদ্দেশ্য অনুযায়ী হবে।</li>
+          </ol>
+        </div>
+
+        <div class="card bg-green-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৭: শৃঙ্খলা ও আচরণবিধি</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>প্রতিটি সদস্য ইসলামি আদর্শ, শালীনতা ও সৌজন্যতা বজায় রাখবেন।</li>
+            <li>ক্লাবের সুনাম ক্ষুণ্ণ হয় এমন কোনো কর্মকাণ্ডে জড়িত হওয়া যাবে না।</li>
+            <li>নিয়ম লঙ্ঘনের ক্ষেত্রে কার্যনির্বাহী কমিটি সতর্কতা, সাময়িক বহিষ্কার বা স্থায়ী বহিষ্কারের সিদ্ধান্ত নিতে পারবে।</li>
+          </ol>
+        </div>
+
+        <div class="card bg-yellow-50 rounded-xl p-6">
+          <h2 class="text-xl font-bold text-green-800 mb-3">ধারা ৮: গঠনতন্ত্র সংশোধন</h2>
+          <ol class="list-decimal list-inside space-y-2">
+            <li>কার্যনির্বাহী কমিটির সংখ্যাগরিষ্ঠ (কমপক্ষে দুই-তৃতীয়াংশ) সদস্যের সম্মতিতে গঠনতন্ত্র সংশোধন করা যাবে।</li>
+            <li>যেকোনো সংশোধনী কার্যকর হওয়ার আগে সাধারণ সদস্যদের অবহিত করা হবে।</li>
+          </ol>
+        </div>
+
       </div>
     </div>
   </section>
@@ -75,25 +129,24 @@
   <footer class="bg-gray-900 text-white py-10 text-center">
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
-      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, ঢাকা।</p>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, তেজগাঁও, ঢাকা।</p>
       <hr class="border-gray-700 mb-6">
-      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
+      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/GSC73</span></p>
     </div>
   </footer>
 
   <button id="backToTop" title="Back to Top">↑</button>
 
   <script>
-    emailjs.init('4McRUK1Y1iGOjnHZb');
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var btnText=document.getElementById('btn-text'),btnLoading=document.getElementById('btn-loading'),submitBtn=document.getElementById('submit-btn'),msgEl=document.getElementById('form-message');
-      btnText.classList.add('hidden');btnLoading.classList.remove('hidden');submitBtn.disabled=true;submitBtn.style.opacity='0.7';
-      var params={from_name:document.getElementById('from_name').value,from_email:document.getElementById('from_email').value,message:document.getElementById('message').value};
-      emailjs.send('service_244m0pm','template_v0lw5j9',params)
-        .then(function(r){msgEl.innerHTML='<div class="flex items-center justify-center gap-2"><span class="text-2xl">✅</span><div><strong>জাযাকাল্লাহু খাইরান!</strong><br>আপনার মেসেজ সফলভাবে পাঠানো হয়েছে।</div></div>';msgEl.className='mt-4 text-center text-sm font-medium text-green-700 bg-green-50 p-4 rounded-lg border border-green-200';msgEl.classList.remove('hidden');document.getElementById('contact-form').reset();setTimeout(function(){msgEl.classList.add('hidden');},8000);})
-        .catch(function(e){msgEl.innerHTML='<div class="flex items-center justify-center gap-2"><span class="text-2xl">❌</span><div><strong>দুঃখিত!</strong> সরাসরি ইমেইল করুন: <a href="mailto:gscicc26@gmail.com" class="text-blue-600 underline">gscicc26@gmail.com</a></div></div>';msgEl.className='mt-4 text-center text-sm font-medium text-red-700 bg-red-50 p-4 rounded-lg border border-red-200';msgEl.classList.remove('hidden');setTimeout(function(){msgEl.classList.add('hidden');},8000);})
-        .finally(function(){btnText.classList.remove('hidden');btnLoading.classList.add('hidden');submitBtn.disabled=false;submitBtn.style.opacity='1';});
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
     });
 
     var darkToggle = document.getElementById('darkToggle');
@@ -104,7 +157,5 @@
     btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
     document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
   </script>
-  <script src="https://pl29771284.effectivecpmnetwork.com/8b/f7/6c/8bf76cbb0692eb543ef01166294dfbea.js"></script>
-
 </body>
 </html>
