@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    .ff-timer {
+      position: sticky; top: 0; z-index: 40;
+      background: linear-gradient(90deg, #0a3d2e, #14532d);
+      color: #fff; padding: 10px 20px; text-align: center;
+      font-weight: 700; font-size: 1.1rem; letter-spacing: 0.05em;
+    }
+    .ff-timer.warn { background: linear-gradient(90deg, #b91c1c, #7f1d1d); }
+    .ff-progress-track { background: #e5e7eb; border-radius: 9999px; height: 8px; overflow: hidden; }
+    .ff-progress-fill { background: linear-gradient(90deg, #16a34a, #4ade80); height: 100%; transition: width 0.3s ease; }
+    .ff-option-label {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: all 0.15s;
+    }
+    .ff-option-label:hover { border-color: #16a34a; background: #f0fdf4; }
+    .ff-option-label input { accent-color: #16a34a; width: 18px; height: 18px; flex-shrink: 0; }
+    .ff-scorecircle {
+      width: 180px; height: 180px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: conic-gradient(#16a34a var(--pct, 0%), #e5e7eb 0);
+      margin: 0 auto;
+    }
+    .ff-scorecircle-inner {
+      width: 145px; height: 145px; border-radius: 50%; background: #fff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body class="h-full smooth-scroll bg-gray-50">
+
+  <div id="ff-timer" class="ff-timer hidden">⏱️ সময় বাকি: <span id="ff-timer-text">--:--</span></div>
+
+  <div class="max-w-2xl mx-auto px-5 py-8">
+
+    <div id="ff-loading" class="text-center py-20">
+      <div class="animate-spin h-12 w-12 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div>
+      <p class="text-gray-500 mt-4">লোড হচ্ছে...</p>
+    </div>
+
+    <div id="ff-error" class="hidden text-center py-20">
+      <div class="text-6xl mb-4">😔</div>
+      <h2 class="text-xl font-bold text-gray-800">ফরমটি পাওয়া যায়নি বা এখন চালু নেই</h2>
+      <a href="forms.html" class="inline-block mt-6 bg-green-700 text-white px-6 py-3 rounded-lg font-bold">📝 সব ফরম দেখুন</a>
+    </div>
+
+    <div id="ff-content" class="hidden">
+      <div class="bg-white rounded-2xl shadow-xl p-6 mb-4">
+        <h1 class="text-2xl font-bold text-gray-800 mb-1" id="ff-title"></h1>
+        <p class="text-gray-500 text-sm" id="ff-desc"></p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl p-6 mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold text-gray-600" id="ff-step-label">ধাপ ১ / ১</span>
+          <span class="text-sm text-gray-400" id="ff-step-title"></span>
+        </div>
+        <div class="ff-progress-track"><div class="ff-progress-fill" id="ff-progress-fill" style="width:0%"></div></div>
+      </div>
+
+      <form id="ff-form">
+        <div id="ff-questions" class="space-y-4"></div>
+
+        <div class="flex gap-3 mt-6 mb-16">
+          <button type="button" id="ff-prev-btn" onclick="ffGoStep(-1)" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300 hidden">← পূর্ববর্তী</button>
+          <button type="button" id="ff-next-btn" onclick="ffGoStep(1)" class="flex-1 bg-yellow-400 text-green-900 font-bold py-3 rounded-lg hover:bg-yellow-300">পরবর্তী →</button>
+          <button type="submit" id="ff-submit-btn" class="flex-1 bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600 hidden">✅ Submit করুন</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="ff-result" class="hidden">
+      <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div id="ff-result-quiz" class="hidden">
+          <p class="text-gray-500 text-sm uppercase tracking-wide mb-4" id="ff-result-formtitle"></p>
+          <div class="ff-scorecircle" id="ff-scorecircle">
+            <div class="ff-scorecircle-inner">
+              <div class="text-3xl font-bold text-gray-800" id="ff-result-pct">0%</div>
+              <div class="text-xs text-gray-500 mt-1" id="ff-result-frac">0/0</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-8">
+            <div class="bg-green-50 rounded-lg p-3"><p class="text-xs text-gray-500">সঠিক</p><p class="text-xl font-bold text-green-700" id="ff-correct-count">0</p></div>
+            <div class="bg-red-50 rounded-lg p-3"><p class="text-xs text-gray-500">ভুল</p><p class="text-xl font-bold text-red-600" id="ff-wrong-count">0</p></div>
+            <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500">বাদ</p><p class="text-xl font-bold text-gray-500" id="ff-skip-count">0</p></div>
+          </div>
+        </div>
+        <div id="ff-result-reg" class="hidden">
+          <div class="text-6xl mb-4">✅</div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">জাযাকাল্লাহু খাইরান!</h2>
+          <p class="text-gray-600">আপনার তথ্য সফলভাবে জমা হয়েছে।</p>
+        </div>
+        <a href="forms.html" class="inline-block mt-8 bg-green-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600">📝 আরও ফরম দেখুন</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="firebase-config.js"></script>
+  <script>
+    var ffForm = null;
+    var ffFormId = '';
+    var ffCurrentStep = 0;
+    var ffAnswers = {};
+    var ffTimerInterval = null;
+    var ffTimeLeftSec = 0;
+    var ffSubmitted = false;
+
+    var urlParams = new URLSearchParams(window.location.search);
+    ffFormId = urlParams.get('id');
+
+    if (!ffFormId) {
+      showFfError();
+    } else {
+      db.collection('forms').doc(ffFormId).get().then(function(doc) {
+        if (!doc.exists || !doc.data().active) { showFfError(); return; }
+        ffForm = doc.data();
+        document.getElementById('ff-loading').classList.add('hidden');
+        document.getElementById('ff-content').classList.remove('hidden');
+        document.getElementById('ff-title').textContent = ffForm.title || '';
+        document.getElementById('ff-desc').textContent = ffForm.description || '';
+        document.title = (ffForm.title || 'Form') + ' | GSCICC';
+
+        if (ffForm.type === 'quiz') {
+          ffTimeLeftSec = (ffForm.timeLimit || 10) * 60;
+          document.getElementById('ff-timer').classList.remove('hidden');
+          startFfTimer();
+        }
+
+        renderFfStep();
+      }).catch(function() { showFfError(); });
+    }
+
+    function showFfError() {
+      document.getElementById('ff-loading').classList.add('hidden');
+      document.getElementById('ff-error').classList.remove('hidden');
+    }
+
+    function startFfTimer() {
+      updateFfTimerText();
+      ffTimerInterval = setInterval(function() {
+        ffTimeLeftSec--;
+        updateFfTimerText();
+        if (ffTimeLeftSec <= 0) {
+          clearInterval(ffTimerInterval);
+          if (!ffSubmitted) { ffSubmitForm(true); }
+        }
+      }, 1000);
+    }
+
+    function updateFfTimerText() {
+      var m = Math.floor(ffTimeLeftSec / 60);
+      var s = ffTimeLeftSec % 60;
+      document.getElementById('ff-timer-text').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      var timerEl = document.getElementById('ff-timer');
+      if (ffTimeLeftSec <= 60) timerEl.classList.add('warn'); else timerEl.classList.remove('warn');
+    }
+
+    function renderFfStep() {
+      var step = ffForm.steps[ffCurrentStep];
+      var totalSteps = ffForm.steps.length;
+      document.getElementById('ff-step-label').textContent = 'ধাপ ' + (ffCurrentStep + 1) + ' / ' + totalSteps;
+      document.getElementById('ff-step-title').textContent = step.title || '';
+      document.getElementById('ff-progress-fill').style.width = (((ffCurrentStep + 1) / totalSteps) * 100) + '%';
+
+      var html = '';
+      step.questions.forEach(function(q) {
+        html += '<div class="bg-white rounded-2xl shadow p-5">';
+        html += '<label class="block font-semibold text-gray-800 mb-3">' + q.text + (q.required ? ' <span class="text-red-500">*</span>' : '') + '</label>';
+
+        if (q.type === 'short') {
+          html += '<input type="text" class="gsc-input" data-qid="' + q.id + '" ' + (q.required ? 'required' : '') + ' value="' + (ffAnswers[q.id] || '') + '" oninput="ffAnswers[\'' + q.id + '\']=this.value">';
+        } else if (q.type === 'paragraph') {
+          html += '<textarea class="gsc-input" rows="4" data-qid="' + q.id + '" ' + (q.required ? 'required' : '') + ' oninput="ffAnswers[\'' + q.id + '\']=this.value">' + (ffAnswers[q.id] || '') + '</textarea>';
+        } else if (q.type === 'dropdown') {
+          html += '<select class="gsc-input" data-qid="' + q.id + '" ' + (q.required ? 'required' : '') + ' onchange="ffAnswers[\'' + q.id + '\']=this.value">';
+          html += '<option value="">নির্বাচন করুন</option>';
+          q.options.forEach(function(opt, oi) {
+            var sel = ffAnswers[q.id] === opt ? 'selected' : '';
+            html += '<option value="' + escFf(opt) + '" ' + sel + '>' + opt + '</option>';
+          });
+          html += '</select>';
+        } else if (q.type === 'mcq') {
+          html += '<div class="space-y-2">';
+          q.options.forEach(function(opt, oi) {
+            var checked = ffAnswers[q.id] === opt ? 'checked' : '';
+            html += '<label class="ff-option-label"><input type="radio" name="q_' + q.id + '" value="' + escFf(opt) + '" ' + checked + ' ' + (q.required ? 'required' : '') + ' onchange="ffAnswers[\'' + q.id + '\']=this.value"><span>' + opt + '</span></label>';
+          });
+          html += '</div>';
+        } else if (q.type === 'checkbox') {
+          if (!Array.isArray(ffAnswers[q.id])) ffAnswers[q.id] = [];
+          html += '<div class="space-y-2">';
+          q.options.forEach(function(opt, oi) {
+            var checked = ffAnswers[q.id].indexOf(opt) > -1 ? 'checked' : '';
+            html += '<label class="ff-option-label"><input type="checkbox" value="' + escFf(opt) + '" ' + checked + ' onchange="ffToggleCheckbox(\'' + q.id + '\',\'' + escFf(opt).replace(/'/g, "\\'") + '\',this.checked)"><span>' + opt + '</span></label>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+      document.getElementById('ff-questions').innerHTML = html;
+
+      document.getElementById('ff-prev-btn').classList.toggle('hidden', ffCurrentStep === 0);
+      var isLast = ffCurrentStep === totalSteps - 1;
+      document.getElementById('ff-next-btn').classList.toggle('hidden', isLast);
+      document.getElementById('ff-submit-btn').classList.toggle('hidden', !isLast);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function ffToggleCheckbox(qid, val, checked) {
+      if (!Array.isArray(ffAnswers[qid])) ffAnswers[qid] = [];
+      var idx = ffAnswers[qid].indexOf(val);
+      if (checked && idx === -1) ffAnswers[qid].push(val);
+      if (!checked && idx > -1) ffAnswers[qid].splice(idx, 1);
+    }
+
+    function escFf(s) { return (s || '').replace(/"/g, '&quot;'); }
+
+    function ffValidateStep() {
+      var step = ffForm.steps[ffCurrentStep];
+      for (var i = 0; i < step.questions.length; i++) {
+        var q = step.questions[i];
+        if (!q.required) continue;
+        var val = ffAnswers[q.id];
+        if (q.type === 'checkbox') {
+          if (!Array.isArray(val) || val.length === 0) { showFfMissing(q.text); return false; }
+        } else {
+          if (!val || !String(val).trim()) { showFfMissing(q.text); return false; }
+        }
+      }
+      return true;
+    }
+
+    function showFfMissing(text) {
+      alert('⚠️ এই প্রশ্নের উত্তর আবশ্যক: ' + text);
+    }
+
+    function ffGoStep(dir) {
+      if (dir > 0 && !ffValidateStep()) return;
+      ffCurrentStep += dir;
+      renderFfStep();
+    }
+
+    document.getElementById('ff-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!ffValidateStep()) return;
+      ffSubmitForm(false);
+    });
+
+    function ffSubmitForm(auto) {
+      if (ffSubmitted) return;
+      ffSubmitted = true;
+      if (ffTimerInterval) clearInterval(ffTimerInterval);
+
+      var submitBtn = document.getElementById('ff-submit-btn');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ জমা হচ্ছে...'; }
+
+      var responseData = {
+        formId: ffFormId,
+        formTitle: ffForm.title,
+        answers: ffAnswers,
+        submittedAt: new Date().toISOString(),
+        autoSubmitted: !!auto
+      };
+
+      var correct = 0, wrong = 0, skipped = 0, totalGradable = 0, earnedMarks = 0, totalMarks = 0;
+
+      if (ffForm.type === 'quiz') {
+        ffForm.steps.forEach(function(step) {
+          step.questions.forEach(function(q) {
+            if (q.type !== 'mcq' && q.type !== 'checkbox' && q.type !== 'dropdown') return;
+            totalGradable++;
+            totalMarks += (q.marks || 0);
+            var given = ffAnswers[q.id];
+            var correctOpts = (q.correct || []).map(function(idx) { return q.options[idx]; });
+            var isCorrect = false;
+            if (q.type === 'checkbox') {
+              var givenArr = Array.isArray(given) ? given.slice().sort() : [];
+              var correctArr = correctOpts.slice().sort();
+              isCorrect = givenArr.length > 0 && JSON.stringify(givenArr) === JSON.stringify(correctArr);
+            } else {
+              isCorrect = given && correctOpts.indexOf(given) > -1;
+            }
+            if (given === undefined || given === '' || (Array.isArray(given) && given.length === 0)) {
+              skipped++;
+            } else if (isCorrect) {
+              correct++; earnedMarks += (q.marks || 0);
+            } else {
+              wrong++;
+            }
+          });
+        });
+        var pct = totalMarks > 0 ? (earnedMarks / totalMarks) * 100 : 0;
+        responseData.score = earnedMarks;
+        responseData.totalMarks = totalMarks;
+        responseData.percentage = pct;
+        responseData.correct = correct;
+        responseData.wrong = wrong;
+        responseData.skipped = skipped;
+      }
+
+      db.collection('form_responses').add(responseData).then(function() {
+        showFfResult(responseData);
+      }).catch(function(err) {
+        alert('❌ জমা দিতে সমস্যা হয়েছে: ' + err.message);
+        ffSubmitted = false;
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '✅ Submit করুন'; }
+      });
+    }
+
+    function showFfResult(data) {
+      document.getElementById('ff-timer').classList.add('hidden');
+      document.getElementById('ff-content').classList.add('hidden');
+      document.getElementById('ff-result').classList.remove('hidden');
+
+      if (ffForm.type === 'quiz') {
+        document.getElementById('ff-result-quiz').classList.remove('hidden');
+        document.getElementById('ff-result-formtitle').textContent = ffForm.title;
+        var pct = data.percentage || 0;
+        document.getElementById('ff-result-pct').textContent = pct.toFixed(1) + '%';
+        document.getElementById('ff-result-frac').textContent = data.score + '/' + data.totalMarks;
+        document.getElementById('ff-scorecircle').style.setProperty('--pct', pct + '%');
+        document.getElementById('ff-correct-count').textContent = data.correct;
+        document.getElementById('ff-wrong-count').textContent = data.wrong;
+        document.getElementById('ff-skip-count').textContent = data.skipped;
+      } else {
+        document.getElementById('ff-result-reg').classList.remove('hidden');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
