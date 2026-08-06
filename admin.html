@@ -343,11 +343,12 @@
   </div>
 
   <div class="modal-overlay" id="responses-modal">
-    <div class="modal-box p-6">
+    <div class="modal-box p-6" style="max-width:1100px;">
       <button class="modal-close-btn" onclick="closeFormModal('responses')">✕</button>
       <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">📊 <span id="responses-title">Responses</span></h2>
       <div id="responses-summary" class="mb-4"></div>
-      <button onclick="downloadResponsesCSV()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500 mb-2">⬇️ Download CSV</button>
+      <button onclick="downloadResponsesCSV()" class="bg-blue-600 text-white font-bold px-5 py-2 rounded-lg hover:bg-blue-500 mb-4">⬇️ Download CSV</button>
+      <div id="responses-table-wrap" class="overflow-x-auto"></div>
     </div>
   </div>
 
@@ -1051,39 +1052,75 @@
     }
 
     var currentFormQuestionMap = {};
+    var currentFormQuestionOrder = [];
 
     function openResponses(formId, title) {
       currentResponsesFormId = formId;
       document.getElementById('responses-title').textContent = title;
       document.getElementById('responses-summary').innerHTML = '<p class="text-gray-500">লোড হচ্ছে...</p>';
+      document.getElementById('responses-table-wrap').innerHTML = '';
       document.getElementById('responses-modal').classList.add('open');
 
       currentFormQuestionMap = {};
+      currentFormQuestionOrder = [];
+
       db.collection('forms').doc(formId).get().then(function(formDoc) {
         if (formDoc.exists) {
           var fd = formDoc.data();
           (fd.steps || []).forEach(function(step) {
             (step.questions || []).forEach(function(q) {
               currentFormQuestionMap[q.id] = q.text || q.id;
+              currentFormQuestionOrder.push(q.id);
             });
           });
         }
-      });
-
-      db.collection('form_responses').where('formId', '==', formId).get().then(function(snap) {
+        return db.collection('form_responses').where('formId', '==', formId).get();
+      }).then(function(snap) {
         currentResponsesData = [];
         snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; currentResponsesData.push(d); });
+        currentResponsesData.sort(function(a, b) { return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0); });
+
         var count = currentResponsesData.length;
-        var html = '<p class="mb-2"><strong>মোট রেসপন্স:</strong> ' + count + '</p>';
-        var isQuiz = currentResponsesData.length && currentResponsesData[0].score !== undefined;
+        var isQuiz = count > 0 && currentResponsesData[0].score !== undefined;
+        var html = '<p class="mb-1"><strong>মোট রেসপন্স:</strong> ' + count + '</p>';
         if (isQuiz && count > 0) {
           var avg = currentResponsesData.reduce(function(s, r) { return s + (r.percentage || 0); }, 0) / count;
-          html += '<p class="mb-2"><strong>গড় স্কোর:</strong> ' + avg.toFixed(1) + '%</p>';
+          html += '<p class="mb-1"><strong>গড় স্কোর:</strong> ' + avg.toFixed(1) + '%</p>';
         }
         document.getElementById('responses-summary').innerHTML = html;
+        renderResponsesTable(isQuiz);
       }).catch(function(err) {
         document.getElementById('responses-summary').innerHTML = '<p class="text-red-500">লোড এরর: ' + err.message + '</p>';
       });
+    }
+
+    function renderResponsesTable(isQuiz) {
+      var wrap = document.getElementById('responses-table-wrap');
+      if (currentResponsesData.length === 0) {
+        wrap.innerHTML = '<p class="text-center text-gray-400 py-8">এখনো কোনো রেসপন্স জমা পড়েনি</p>';
+        return;
+      }
+      var html = '<table class="data-table"><thead><tr>';
+      html += '<th>জমার সময়</th>';
+      if (isQuiz) html += '<th>স্কোর</th>';
+      currentFormQuestionOrder.forEach(function(qid) {
+        html += '<th style="min-width:160px">' + (currentFormQuestionMap[qid] || qid) + '</th>';
+      });
+      html += '</tr></thead><tbody>';
+
+      currentResponsesData.forEach(function(r) {
+        html += '<tr>';
+        html += '<td style="white-space:nowrap">' + (r.submittedAt ? new Date(r.submittedAt).toLocaleString('bn-BD') : '-') + '</td>';
+        if (isQuiz) html += '<td>' + (r.percentage != null ? r.percentage.toFixed(1) + '%' : '-') + ' <span class="text-xs text-gray-400">(' + (r.score != null ? r.score : '-') + '/' + (r.totalMarks != null ? r.totalMarks : '-') + ')</span></td>';
+        currentFormQuestionOrder.forEach(function(qid) {
+          var v = r.answers ? r.answers[qid] : '';
+          if (Array.isArray(v)) v = v.join(', ');
+          html += '<td>' + (v ? String(v).replace(/</g, '&lt;') : '<span class="text-gray-300">-</span>') + '</td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
     }
 
     function downloadResponsesCSV() {
