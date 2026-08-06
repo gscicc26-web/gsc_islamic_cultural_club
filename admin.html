@@ -1050,11 +1050,26 @@
       }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
 
+    var currentFormQuestionMap = {};
+
     function openResponses(formId, title) {
       currentResponsesFormId = formId;
       document.getElementById('responses-title').textContent = title;
       document.getElementById('responses-summary').innerHTML = '<p class="text-gray-500">লোড হচ্ছে...</p>';
       document.getElementById('responses-modal').classList.add('open');
+
+      currentFormQuestionMap = {};
+      db.collection('forms').doc(formId).get().then(function(formDoc) {
+        if (formDoc.exists) {
+          var fd = formDoc.data();
+          (fd.steps || []).forEach(function(step) {
+            (step.questions || []).forEach(function(q) {
+              currentFormQuestionMap[q.id] = q.text || q.id;
+            });
+          });
+        }
+      });
+
       db.collection('form_responses').where('formId', '==', formId).get().then(function(snap) {
         currentResponsesData = [];
         snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; currentResponsesData.push(d); });
@@ -1076,8 +1091,9 @@
       var allKeys = {};
       currentResponsesData.forEach(function(r) { Object.keys(r.answers || {}).forEach(function(k) { allKeys[k] = true; }); });
       var qKeys = Object.keys(allKeys);
-      var headers = ['Submitted At', 'Score %'].concat(qKeys);
-      var csv = headers.map(function(h) { return '"' + h.replace(/"/g, '""') + '"'; }).join(',') + '\n';
+      var qLabels = qKeys.map(function(k) { return currentFormQuestionMap[k] || k; });
+      var headers = ['Submitted At', 'Score %'].concat(qLabels);
+      var csv = headers.map(function(h) { return '"' + String(h).replace(/"/g, '""') + '"'; }).join(',') + '\n';
       currentResponsesData.forEach(function(r) {
         var row = [r.submittedAt ? new Date(r.submittedAt).toLocaleString('bn-BD') : '', r.percentage != null ? r.percentage.toFixed(1) : ''];
         qKeys.forEach(function(k) {
