@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /dashboard.html
+
+Sitemap: https://gscicc26-web.github.io/gsc_islamic_cultural_club/sitemap.xml
