@@ -1,0 +1,32 @@
+{
+  "name": "Govt. Science College Islamic Cultural Club",
+  "short_name": "GSCICC",
+  "description": "Government Science College Islamic Cultural Club (GSCICC) - সরকারি বিজ্ঞান কলেজের ইসলামিক ছাত্র সংগঠন।",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a3d2e",
+  "theme_color": "#0a3d2e",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
