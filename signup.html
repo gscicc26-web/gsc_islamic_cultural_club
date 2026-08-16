@@ -33,6 +33,7 @@
       <a href="founders.html">🌟 Founders</a>
       <a href="gallery.html">🖼️ Gallery</a>
       <a href="constitution.html">📋 Constitution</a>
+      <a href="forms.html">📝 Forms & Quiz</a>
       <a href="contact.html">📞 Contact</a>
       <div class="dropdown-line"></div>
       <div class="auth-buttons">
@@ -160,7 +161,7 @@
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
       <hr class="border-gray-700 mb-6">
-      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/GSC73</span></p>
+      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom</span></p>
     </div>
   </footer>
 
@@ -218,6 +219,7 @@
       emailjs.send('service_244m0pm', 'template_v0lw5j9', {
         from_name: 'GSCICC System',
         from_email: memberEmail,
+        to_email: 'gscicc26@gmail.com',
         message: '🆕 নতুন সদস্য রেজিস্ট্রেশন!\n\nনাম: ' + memberName + '\nইমেইল: ' + memberEmail + '\nবিভাগ: ' + memberDept + '\n\n👉 Admin Panel এ গিয়ে Approve করুন।'
       }).then(function() {
         console.log('✅ Admin notified');
