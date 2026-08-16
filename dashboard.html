@@ -15,17 +15,43 @@
 
   <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
 
-  <nav class="sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-      <div class="flex flex-wrap justify-center items-center gap-4">
-        <a href="index.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Home</a>
-        <a href="about.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">About</a>
-        <a href="activities.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Activities</a>
-        <a href="dashboard.html" class="text-yellow-400 hover:text-white transition-colors duration-300 font-medium text-sm px-3 py-1">Dashboard</a>
-        <button onclick="logOut()" class="bg-red-500 text-white hover:bg-red-600 transition-colors duration-300 font-bold text-sm px-4 py-2 rounded-lg">🚪 Logout</button>
-      </div>
+  <!-- ===== MEMBER TOP BAR ===== -->
+  <div class="member-topbar">
+    <span class="member-topbar-title">GSCICC</span>
+    <div class="member-topbar-icons">
+      <a href="index.html" class="member-icon-btn" title="Home">🏠</a>
+      <button class="member-icon-btn" id="notif-btn" title="Notifications" onclick="openNotifPanel()">
+        🔔<span class="member-badge hidden" id="notif-badge">0</span>
+      </button>
+      <button class="member-icon-btn" title="Messages" onclick="openMessagesStub()">
+        💬<span class="member-badge hidden" id="msg-badge">0</span>
+      </button>
+      <button class="member-icon-btn" title="Menu" onclick="openSlideMenu()">☰</button>
     </div>
-  </nav>
+  </div>
+
+  <!-- ===== SLIDE MENU ===== -->
+  <div class="member-slide-overlay" id="slide-overlay" onclick="closeSlideMenu()"></div>
+  <div class="member-slide-menu" id="slide-menu">
+    <div class="member-slide-header">
+      <span>মেনু</span>
+      <button class="member-slide-close" onclick="closeSlideMenu()">✕</button>
+    </div>
+    <a href="index.html">🏠 হোম</a>
+    <a href="about.html">ℹ️ About Us</a>
+    <a href="activities.html">📚 Activities</a>
+    <a href="committee.html">👥 Committee</a>
+    <a href="founders.html">🌟 Founders</a>
+    <a href="gallery.html">🖼️ Gallery</a>
+    <a href="constitution.html">📋 Constitution</a>
+    <a href="notices.html">📢 Notices</a>
+    <a href="events.html">📅 Events</a>
+    <a href="news.html">📰 News</a>
+    <a href="forms.html">📝 Forms &amp; Quiz</a>
+    <a href="contact.html">📞 Contact</a>
+    <div class="slide-divider"></div>
+    <button class="slide-item slide-logout" onclick="logOut()">🚪 Logout</button>
+  </div>
 
   <div class="gradient-bg islamic-pattern py-12 text-center text-white">
     <h1 class="text-4xl font-bold text-yellow-400 mb-2">মেম্বার ড্যাশবোর্ড</h1>
@@ -152,7 +178,7 @@
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
       <hr class="border-gray-700 mb-6">
-      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/GSC73</span></p>
+      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
     </div>
   </footer>
 
@@ -163,7 +189,7 @@
 
     auth.onAuthStateChanged(function(user) {
       if (user) { currentUserId = user.uid; loadDashboard(user); }
-      else { window.location.href = 'login.html'; }
+      else { window.location.replace('login.html'); }
     });
 
     function loadDashboard(user) {
@@ -172,7 +198,6 @@
           currentData = doc.data();
           document.getElementById('loading-state').classList.add('hidden');
 
-          // Status অনুযায়ী দেখান
           if (currentData.status === 'Pending') {
             document.getElementById('pending-name').textContent = currentData.fullName;
             document.getElementById('pending-email').textContent = currentData.email;
@@ -183,7 +208,7 @@
           } else {
             displayData(currentData);
             var currentUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-            document.getElementById('profile-link').value = currentUrl + 'profile.html?id=' + user.uid;
+            document.getElementById('profile-link').value = currentUrl + 'member-profile.html?id=' + user.uid;
             document.getElementById('view-mode').classList.remove('hidden');
           }
         }
@@ -258,6 +283,60 @@
 
     function copyProfileLink() { var l = document.getElementById('profile-link'); l.select(); document.execCommand('copy'); var b = document.getElementById('copy-btn'); b.textContent = '✅ কপি হয়েছে!'; setTimeout(function() { b.textContent = '📋 কপি'; }, 2000); }
     function logOut() { auth.signOut().then(function() { window.location.href = 'login.html'; }); }
+
+    // ===== Slide Menu =====
+    function openSlideMenu() {
+      document.getElementById('slide-menu').classList.add('open');
+      document.getElementById('slide-overlay').classList.add('open');
+    }
+    function closeSlideMenu() {
+      document.getElementById('slide-menu').classList.remove('open');
+      document.getElementById('slide-overlay').classList.remove('open');
+    }
+
+    // ===== Notifications (basic: badge if new notices/events since last visit) =====
+    function checkNotifBadge() {
+      var lastSeen = localStorage.getItem('gscicc_lastSeenNotif') || '1970-01-01';
+      var newestFound = lastSeen;
+      var unreadCount = 0;
+
+      Promise.all([
+        db.collection('notices').get(),
+        db.collection('events').get()
+      ]).then(function(results) {
+        results.forEach(function(snap) {
+          snap.forEach(function(doc) {
+            var d = doc.data();
+            var date = d.date || d.createdAt;
+            if (date && date > lastSeen) {
+              unreadCount++;
+              if (date > newestFound) newestFound = date;
+            }
+          });
+        });
+        if (unreadCount > 0) {
+          var badge = document.getElementById('notif-badge');
+          badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+          badge.classList.remove('hidden');
+        }
+        window._gscicc_newestNotif = newestFound;
+      }).catch(function() {});
+    }
+    checkNotifBadge();
+
+    function openNotifPanel() {
+      // mark as seen and clear badge
+      if (window._gscicc_newestNotif) {
+        localStorage.setItem('gscicc_lastSeenNotif', window._gscicc_newestNotif);
+      }
+      document.getElementById('notif-badge').classList.add('hidden');
+      window.location.href = 'notices.html';
+    }
+
+    // ===== Messages (coming soon stub) =====
+    function openMessagesStub() {
+      alert('💬 এডমিনের সাথে মেসেজিং সিস্টেম শীঘ্রই আসছে ইনশাআল্লাহ!');
+    }
 
     var darkToggle = document.getElementById('darkToggle');
     if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
