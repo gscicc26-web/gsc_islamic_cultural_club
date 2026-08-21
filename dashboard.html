@@ -23,7 +23,7 @@
       <button class="member-icon-btn" id="notif-btn" title="Notifications" onclick="openNotifPanel()">
         🔔<span class="member-badge hidden" id="notif-badge">0</span>
       </button>
-      <button class="member-icon-btn" title="Messages" onclick="openMessagesStub()">
+      <button class="member-icon-btn" title="Messages" onclick="openMessages()">
         💬<span class="member-badge hidden" id="msg-badge">0</span>
       </button>
       <button class="member-icon-btn" title="Menu" onclick="openSlideMenu()">☰</button>
@@ -178,9 +178,27 @@
     <div class="max-w-6xl mx-auto px-6">
       <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
       <hr class="border-gray-700 mb-6">
-      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail Rupom/73</span></p>
+      <p class="text-sm opacity-50">&copy; 2024 GSCICC | Developed by <span class="text-yellow-400">MD Samin Ismail</span></p>
     </div>
   </footer>
+
+  <!-- ===== CHAT PANEL (Member <-> Admin) ===== -->
+  <div class="chat-panel" id="chat-panel">
+    <div class="chat-header">
+      <button onclick="closeMessages()">←</button>
+      <div>
+        <div class="chat-title">💬 Admin-এর সাথে চ্যাট</div>
+        <div class="chat-sub">GSCICC Support</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-empty">লোড হচ্ছে...</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="মেসেজ লিখুন..." onkeydown="if(event.key==='Enter')sendMemberMessage()">
+      <button onclick="sendMemberMessage()" id="chat-send-btn">➤</button>
+    </div>
+  </div>
 
   <script src="firebase-config.js"></script>
   <script>
@@ -208,8 +226,10 @@
           } else {
             displayData(currentData);
             var currentUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-            document.getElementById('profile-link').value = currentUrl + 'member-profile.html?id=' + user.uid;
+            document.getElementById('profile-link').value = currentUrl + 'profile.html?id=' + user.uid;
             document.getElementById('view-mode').classList.remove('hidden');
+            checkNotifBadge();
+            watchConversationBadge();
           }
         }
       });
@@ -294,15 +314,17 @@
       document.getElementById('slide-overlay').classList.remove('open');
     }
 
-    // ===== Notifications (basic: badge if new notices/events since last visit) =====
+    // ===== Notifications (Firestore-based: persists across devices) =====
     function checkNotifBadge() {
-      var lastSeen = localStorage.getItem('gscicc_lastSeenNotif') || '1970-01-01';
-      var newestFound = lastSeen;
+      if (!currentUserId) return;
+      var lastSeen = (currentData && currentData.lastSeenNotifAt) || '1970-01-01';
       var unreadCount = 0;
+      var newestFound = lastSeen;
 
       Promise.all([
         db.collection('notices').get(),
-        db.collection('events').get()
+        db.collection('events').get(),
+        db.collection('news').get()
       ]).then(function(results) {
         results.forEach(function(snap) {
           snap.forEach(function(doc) {
@@ -314,28 +336,115 @@
             }
           });
         });
+        var badge = document.getElementById('notif-badge');
         if (unreadCount > 0) {
-          var badge = document.getElementById('notif-badge');
           badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
           badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
         }
         window._gscicc_newestNotif = newestFound;
       }).catch(function() {});
     }
-    checkNotifBadge();
 
     function openNotifPanel() {
-      // mark as seen and clear badge
-      if (window._gscicc_newestNotif) {
-        localStorage.setItem('gscicc_lastSeenNotif', window._gscicc_newestNotif);
+      if (window._gscicc_newestNotif && currentUserId) {
+        db.collection('members').doc(currentUserId).update({ lastSeenNotifAt: window._gscicc_newestNotif }).catch(function() {});
       }
       document.getElementById('notif-badge').classList.add('hidden');
       window.location.href = 'notices.html';
     }
 
-    // ===== Messages (coming soon stub) =====
-    function openMessagesStub() {
-      alert('💬 এডমিনের সাথে মেসেজিং সিস্টেম শীঘ্রই আসছে ইনশাআল্লাহ!');
+    // ===== Messaging (Member <-> Admin) =====
+    var chatUnsubscribe = null;
+    var convUnsubscribe = null;
+
+    function watchConversationBadge() {
+      if (!currentUserId) return;
+      convUnsubscribe = db.collection('conversations').doc(currentUserId).onSnapshot(function(doc) {
+        var badge = document.getElementById('msg-badge');
+        var unread = doc.exists ? (doc.data().unreadByMember || 0) : 0;
+        if (unread > 0) {
+          badge.textContent = unread > 9 ? '9+' : unread;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      });
+    }
+
+    function openMessages() {
+      document.getElementById('chat-panel').classList.add('open');
+      document.getElementById('chat-messages').innerHTML = '<div class="chat-empty">লোড হচ্ছে...</div>';
+
+      // Mark as read for member
+      db.collection('conversations').doc(currentUserId).set({ unreadByMember: 0 }, { merge: true }).catch(function() {});
+
+      if (chatUnsubscribe) chatUnsubscribe();
+      chatUnsubscribe = db.collection('conversations').doc(currentUserId).collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(function(snap) {
+          var msgs = [];
+          snap.forEach(function(doc) { msgs.push(doc.data()); });
+          renderChatMessages(msgs);
+        }, function(err) {
+          document.getElementById('chat-messages').innerHTML = '<div class="chat-empty">লোড এরর: ' + err.message + '</div>';
+        });
+    }
+
+    function closeMessages() {
+      document.getElementById('chat-panel').classList.remove('open');
+      if (chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+    }
+
+    function renderChatMessages(msgs) {
+      var el = document.getElementById('chat-messages');
+      if (msgs.length === 0) {
+        el.innerHTML = '<div class="chat-empty">👋 এখনো কোনো মেসেজ নেই। Admin-কে কিছু জিজ্ঞেস করতে চাইলে নিচে লিখুন।</div>';
+        return;
+      }
+      var html = '';
+      msgs.forEach(function(m) {
+        var mine = m.sender === 'member';
+        var time = m.timestamp ? new Date(m.timestamp).toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '';
+        html += '<div class="chat-bubble ' + (mine ? 'me' : 'them') + '">' + escapeHtml(m.text) + '<span class="chat-time">' + time + '</span></div>';
+      });
+      el.innerHTML = html;
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function escapeHtml(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function sendMemberMessage() {
+      var input = document.getElementById('chat-input');
+      var text = input.value.trim();
+      if (!text) return;
+      var btn = document.getElementById('chat-send-btn');
+      btn.disabled = true;
+      var now = new Date().toISOString();
+
+      db.collection('conversations').doc(currentUserId).collection('messages').add({
+        sender: 'member',
+        text: text,
+        timestamp: now
+      }).then(function() {
+        return db.collection('conversations').doc(currentUserId).set({
+          memberName: currentData.fullName || '',
+          memberEmail: currentData.email || '',
+          lastMessage: text,
+          lastMessageAt: now,
+          unreadByAdmin: firebase.firestore.FieldValue.increment(1),
+          unreadByMember: 0
+        }, { merge: true });
+      }).then(function() {
+        input.value = '';
+      }).catch(function(err) {
+        alert('❌ মেসেজ পাঠাতে সমস্যা: ' + err.message);
+      }).finally(function() {
+        btn.disabled = false;
+      });
     }
 
     var darkToggle = document.getElementById('darkToggle');
