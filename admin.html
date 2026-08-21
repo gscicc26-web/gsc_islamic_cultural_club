@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body class="h-full bg-gray-50">
 
@@ -54,6 +55,7 @@
         <button class="admin-nav-item" onclick="showSection('forms', this)"><span>📝</span> Forms/Quiz</button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Members</div>
         <button class="admin-nav-item" onclick="showSection('members', this)"><span>👥</span> Members</button>
+        <button class="admin-nav-item" onclick="showSection('messages', this)"><span>💬</span> Messages <span id="admin-msg-badge" class="hidden" style="background:#dc2626;color:#fff;font-size:0.65rem;font-weight:700;min-width:18px;height:18px;border-radius:9999px;display:flex;align-items:center;justify-content:center;padding:0 4px;margin-left:auto;">0</span></button>
         <div class="px-5 py-2 text-xs uppercase font-bold text-yellow-400 opacity-70 mt-4">Notice & Settings</div>
         <button class="admin-nav-item" onclick="showSection('popup', this)"><span>📢</span> Popup Notice</button>
         <button class="admin-nav-item" onclick="showSection('settings', this)"><span>⚙️</span> Settings</button>
@@ -145,6 +147,12 @@
 
       <section id="section-members" class="admin-section hidden">
         <div id="members-list" class="space-y-3"></div>
+      </section>
+
+      <section id="section-messages" class="admin-section hidden">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <div id="conv-list"></div>
+        </div>
       </section>
 
       <section id="section-popup" class="admin-section hidden">
@@ -352,6 +360,23 @@
     </div>
   </div>
 
+  <div class="chat-panel" id="admin-chat-panel">
+    <div class="chat-header">
+      <button onclick="closeAdminChat()">←</button>
+      <div>
+        <div class="chat-title" id="admin-chat-title">💬 চ্যাট</div>
+        <div class="chat-sub">Member Support</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="admin-chat-messages">
+      <div class="chat-empty">লোড হচ্ছে...</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="admin-chat-input" placeholder="উত্তর লিখুন..." onkeydown="if(event.key==='Enter')sendAdminMessage()">
+      <button onclick="sendAdminMessage()" id="admin-chat-send-btn">➤</button>
+    </div>
+  </div>
+
   <div class="gsc-toast" id="toast">
     <span id="toast-icon">✅</span>
     <span id="toast-msg"></span>
@@ -362,6 +387,7 @@
     // ================= CONFIG =================
     var ADMIN_EMAIL = 'gscicc26@gmail.com'; // must match the email in Firestore Rules
     var IMGBB_API_KEY = 'c4a71c0e6b1654aef96db873487dad46';
+    emailjs.init('4McRUK1Y1iGOjnHZb');
 
     var allMembers = [];
 
@@ -396,6 +422,7 @@
           document.getElementById('step1-login').classList.add('hidden');
           document.getElementById('admin-panel').classList.remove('hidden');
           loadDashboard();
+          watchTotalUnreadBadge();
         })
         .catch(function(error) { errorEl.textContent = '❌ ' + error.message; errorEl.classList.remove('hidden'); });
     }
@@ -408,7 +435,7 @@
       document.getElementById('section-' + section).classList.remove('hidden');
       document.querySelectorAll('.admin-nav-item').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', committee: 'Committee', founders: 'Founders', forms: 'Forms/Quiz', members: 'Members', popup: 'Popup Notice', settings: 'Settings' };
+      var titles = { dashboard: 'Dashboard', notices: 'Notices', events: 'Events', news: 'News', gallery: 'Gallery', committee: 'Committee', founders: 'Founders', forms: 'Forms/Quiz', members: 'Members', messages: 'Messages', popup: 'Popup Notice', settings: 'Settings' };
       document.getElementById('page-title').textContent = titles[section];
 
       var actions = document.getElementById('topbar-actions');
@@ -430,6 +457,7 @@
       if (section === 'founders') loadFoundersAdmin();
       if (section === 'forms') loadFormsAdmin();
       if (section === 'members') loadMembersAdmin();
+      if (section === 'messages') loadConversationsAdmin();
       if (section === 'popup') loadPopupSettings();
       if (section === 'settings') loadSettings();
       if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
@@ -1165,13 +1193,37 @@
     }
 
     function approveMember(id) {
+      var member = allMembers.find(function(m) { return m.docId === id; });
       db.collection('members').doc(id).update({ status: 'Active' })
-        .then(function() { showToast('Approved! ✅'); loadMembersAdmin(); })
+        .then(function() {
+          showToast('Approved! ✅');
+          loadMembersAdmin();
+          if (member && member.email) {
+            emailjs.send('service_244m0pm', 'template_v0lw5j9', {
+              from_name: 'GSCICC',
+              from_email: ADMIN_EMAIL,
+              to_email: member.email,
+              message: 'আসসালামু আলাইকুম ' + (member.fullName || '') + ',\n\nআলহামদুলিল্লাহ! আপনার GSCICC সদস্যপদের আবেদন অ্যাডমিন কর্তৃক অনুমোদিত হয়েছে। এখন আপনি লগইন করে আপনার মেম্বার ড্যাশবোর্ড ব্যবহার করতে পারবেন।\n\nজাযাকাল্লাহু খাইরান।\nGSC Islamic Cultural Club'
+            }).catch(function(err) { console.log('Email send failed:', err); });
+          }
+        })
         .catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
     function rejectMember(id) {
+      var member = allMembers.find(function(m) { return m.docId === id; });
       db.collection('members').doc(id).update({ status: 'Rejected' })
-        .then(function() { showToast('Rejected'); loadMembersAdmin(); })
+        .then(function() {
+          showToast('Rejected');
+          loadMembersAdmin();
+          if (member && member.email) {
+            emailjs.send('service_244m0pm', 'template_v0lw5j9', {
+              from_name: 'GSCICC',
+              from_email: ADMIN_EMAIL,
+              to_email: member.email,
+              message: 'আসসালামু আলাইকুম ' + (member.fullName || '') + ',\n\nদুঃখিত, আপনার GSCICC সদস্যপদের আবেদনটি এই মুহূর্তে অনুমোদন করা যায়নি। বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করুন।\n\nGSC Islamic Cultural Club'
+            }).catch(function(err) { console.log('Email send failed:', err); });
+          }
+        })
         .catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
 
@@ -1194,6 +1246,125 @@
       a.download = 'gscicc-members-' + new Date().toISOString().split('T')[0] + '.csv';
       a.click();
       showToast('CSV ডাউনলোড হয়েছে! ✅');
+    }
+
+    // ================= MESSAGES (Admin Inbox) =================
+    var adminChatUnsubscribe = null;
+    var totalUnreadUnsubscribe = null;
+    var currentConvId = '';
+
+    function watchTotalUnreadBadge() {
+      if (totalUnreadUnsubscribe) totalUnreadUnsubscribe();
+      totalUnreadUnsubscribe = db.collection('conversations').onSnapshot(function(snap) {
+        var total = 0;
+        snap.forEach(function(doc) { total += (doc.data().unreadByAdmin || 0); });
+        var badge = document.getElementById('admin-msg-badge');
+        if (total > 0) {
+          badge.textContent = total > 9 ? '9+' : total;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      });
+    }
+
+    function loadConversationsAdmin() {
+      db.collection('conversations').orderBy('lastMessageAt', 'desc').get().then(function(snap) {
+        var list = document.getElementById('conv-list');
+        if (snap.empty) {
+          list.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:40px">এখনো কোনো মেসেজ আসেনি</p>';
+          return;
+        }
+        var html = '';
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          var initial = d.memberName ? d.memberName.charAt(0).toUpperCase() : '?';
+          var unread = d.unreadByAdmin || 0;
+          html += '<div class="conv-list-item" onclick="openConversation(\'' + doc.id + '\',\'' + (d.memberName || '').replace(/'/g, "\\'") + '\')">' +
+            '<div class="conv-list-avatar">' + initial + '</div>' +
+            '<div class="conv-list-info">' +
+            '<div class="conv-list-name">' + (d.memberName || 'Unknown') + '</div>' +
+            '<div class="conv-list-preview">' + (d.lastMessage || '') + '</div>' +
+            '</div>' +
+            (unread > 0 ? '<div class="conv-list-unread">' + unread + '</div>' : '') +
+            '</div>';
+        });
+        list.innerHTML = html;
+      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
+    }
+
+    function openConversation(memberId, memberName) {
+      currentConvId = memberId;
+      document.getElementById('admin-chat-title').textContent = '💬 ' + memberName;
+      document.getElementById('admin-chat-messages').innerHTML = '<div class="chat-empty">লোড হচ্ছে...</div>';
+      document.getElementById('admin-chat-panel').classList.add('open');
+
+      db.collection('conversations').doc(memberId).set({ unreadByAdmin: 0 }, { merge: true }).catch(function() {});
+
+      if (adminChatUnsubscribe) adminChatUnsubscribe();
+      adminChatUnsubscribe = db.collection('conversations').doc(memberId).collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(function(snap) {
+          var msgs = [];
+          snap.forEach(function(doc) { msgs.push(doc.data()); });
+          renderAdminChatMessages(msgs);
+        }, function(err) {
+          document.getElementById('admin-chat-messages').innerHTML = '<div class="chat-empty">লোড এরর: ' + err.message + '</div>';
+        });
+    }
+
+    function closeAdminChat() {
+      document.getElementById('admin-chat-panel').classList.remove('open');
+      if (adminChatUnsubscribe) { adminChatUnsubscribe(); adminChatUnsubscribe = null; }
+      loadConversationsAdmin();
+    }
+
+    function escChat(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderAdminChatMessages(msgs) {
+      var el = document.getElementById('admin-chat-messages');
+      if (msgs.length === 0) {
+        el.innerHTML = '<div class="chat-empty">এখনো কোনো মেসেজ নেই।</div>';
+        return;
+      }
+      var html = '';
+      msgs.forEach(function(m) {
+        var mine = m.sender === 'admin';
+        var time = m.timestamp ? new Date(m.timestamp).toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit' }) : '';
+        html += '<div class="chat-bubble ' + (mine ? 'me' : 'them') + '">' + escChat(m.text) + '<span class="chat-time">' + time + '</span></div>';
+      });
+      el.innerHTML = html;
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function sendAdminMessage() {
+      var input = document.getElementById('admin-chat-input');
+      var text = input.value.trim();
+      if (!text || !currentConvId) return;
+      var btn = document.getElementById('admin-chat-send-btn');
+      btn.disabled = true;
+      var now = new Date().toISOString();
+
+      db.collection('conversations').doc(currentConvId).collection('messages').add({
+        sender: 'admin',
+        text: text,
+        timestamp: now
+      }).then(function() {
+        return db.collection('conversations').doc(currentConvId).set({
+          lastMessage: text,
+          lastMessageAt: now,
+          unreadByMember: firebase.firestore.FieldValue.increment(1),
+          unreadByAdmin: 0
+        }, { merge: true });
+      }).then(function() {
+        input.value = '';
+      }).catch(function(err) {
+        showToast('❌ পাঠাতে সমস্যা: ' + err.message, 'error');
+      }).finally(function() {
+        btn.disabled = false;
+      });
     }
 
     // ================= SETTINGS =================
