@@ -13,4 +13,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Force login to persist on this device until the user explicitly logs out —
+// survives closing the browser/app, not just closing the tab.
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(err) {
+  console.log("Persistence setup error:", err);
+});
+
 console.log("✅ Firebase Connected Successfully!");
