@@ -96,6 +96,14 @@
             <div class="bg-red-50 rounded-lg p-3"><p class="text-xs text-gray-500">ভুল</p><p class="text-xl font-bold text-red-600" id="ff-wrong-count">0</p></div>
             <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500">বাদ</p><p class="text-xl font-bold text-gray-500" id="ff-skip-count">0</p></div>
           </div>
+
+          <div id="ff-cert-section" class="hidden mt-8 pt-6" style="border-top:2px dashed #e5e7eb;">
+            <p class="text-sm text-gray-600 mb-3">🎉 অভিনন্দন! আপনি সার্টিফিকেটের জন্য যোগ্য হয়েছেন।</p>
+            <div id="ff-cert-nameinput-wrap" class="hidden mb-3">
+              <input type="text" id="ff-cert-name" class="gsc-input" placeholder="সার্টিফিকেটে যে নাম বসবে তা লিখুন *">
+            </div>
+            <button type="button" onclick="claimCertificate()" id="ff-cert-btn" class="w-full bg-yellow-400 text-green-900 font-bold py-3 rounded-lg hover:bg-yellow-300">🎓 সার্টিফিকেট নিন</button>
+          </div>
         </div>
         <div id="ff-result-reg" class="hidden">
           <div class="text-6xl mb-4">✅</div>
@@ -336,10 +344,60 @@
         document.getElementById('ff-correct-count').textContent = data.correct;
         document.getElementById('ff-wrong-count').textContent = data.wrong;
         document.getElementById('ff-skip-count').textContent = data.skipped;
+
+        // Certificate eligibility
+        if (ffForm.certTemplateId && pct >= (ffForm.certMinScore || 0)) {
+          document.getElementById('ff-cert-section').classList.remove('hidden');
+          var prefilledName = '';
+          if (ffForm.certNameFieldQId && ffAnswers[ffForm.certNameFieldQId]) {
+            prefilledName = ffAnswers[ffForm.certNameFieldQId];
+          }
+          if (prefilledName) {
+            ffCertRecipientName = prefilledName;
+          } else {
+            document.getElementById('ff-cert-nameinput-wrap').classList.remove('hidden');
+          }
+          window._ffCertPercentage = pct;
+        }
       } else {
         document.getElementById('ff-result-reg').classList.remove('hidden');
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    var ffCertRecipientName = '';
+    var ffCertClaimed = false;
+
+    function claimCertificate() {
+      if (ffCertClaimed) return;
+      var name = ffCertRecipientName;
+      if (!name) {
+        name = document.getElementById('ff-cert-name').value.trim();
+        if (!name) { alert('⚠️ সার্টিফিকেটে যে নাম বসবে তা লিখুন।'); return; }
+      }
+      var btn = document.getElementById('ff-cert-btn');
+      btn.disabled = true;
+      btn.textContent = '⏳ তৈরি হচ্ছে...';
+
+      var certId = 'GSCICC-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 900 + 100);
+      var pct = window._ffCertPercentage || 0;
+
+      db.collection('certificates').doc(certId).set({
+        templateId: ffForm.certTemplateId,
+        recipientName: name,
+        eventName: ffForm.title,
+        scoreText: pct.toFixed(1) + '%',
+        issuedAt: new Date().toISOString(),
+        issuedBy: 'auto',
+        formId: ffFormId
+      }).then(function() {
+        ffCertClaimed = true;
+        window.location.href = 'certificate.html?id=' + certId;
+      }).catch(function(err) {
+        alert('❌ সার্টিফিকেট তৈরি করতে সমস্যা: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '🎓 সার্টিফিকেট নিন';
+      });
     }
   </script>
 </body>
