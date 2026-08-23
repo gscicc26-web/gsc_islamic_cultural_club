@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSCICC | Certificate Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="h-full smooth-scroll bg-gray-50">
+
+  <button class="dark-toggle" id="darkToggle" title="Toggle Dark Mode">🌙</button>
+
+  <!-- NAVIGATION -->
+  <nav class="navbar sticky top-0 z-50">
+    <div class="nav-links">
+      <a href="index.html">🏠 Home</a>
+      <a href="notices.html">📢 Notices</a>
+      <a href="events.html">📅 Events</a>
+      <a href="news.html">📰 News</a>
+    </div>
+    <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    <div id="dropdown">
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="activities.html">📚 Activities</a>
+      <a href="committee.html">👥 Committee</a>
+      <a href="founders.html">🌟 Founders</a>
+      <a href="gallery.html">🖼️ Gallery</a>
+      <a href="constitution.html">📋 Constitution</a>
+      <a href="forms.html">📝 Forms &amp; Quiz</a>
+      <a href="contact.html">📞 Contact</a>
+      <div class="dropdown-line"></div>
+      <div class="auth-buttons">
+        <a href="signup.html" class="signup-btn">📝 Sign Up</a>
+        <a href="login.html" class="login-btn">🔑 Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="gradient-bg islamic-pattern py-12 text-center text-white">
+    <h1 class="text-4xl font-bold text-yellow-400 mb-2">✅ সার্টিফিকেট যাচাই</h1>
+    <p class="opacity-80">Certificate ID দিয়ে সত্যতা যাচাই করুন</p>
+  </div>
+
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-lg mx-auto px-6">
+      <div class="bg-white rounded-2xl shadow-xl p-8">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Certificate ID লিখুন</label>
+        <div class="flex gap-2">
+          <input type="text" id="verify-input" class="gsc-input" placeholder="যেমন: GSCICC-XXXXXXXXXX" onkeydown="if(event.key==='Enter')verifyCertificate()">
+          <button onclick="verifyCertificate()" class="bg-green-700 text-white font-bold px-6 py-3 rounded-lg hover:bg-green-600 whitespace-nowrap">যাচাই করুন</button>
+        </div>
+
+        <div id="verify-result" class="mt-6"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-white py-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">GSC Islamic Cultural Club</h3>
+      <p class="opacity-70 mb-6">সরকারি বিজ্ঞান কলেজ, তেজগাঁও, ঢাকা</p>
+      <hr class="border-gray-700 mb-6">
+      <p class="text-sm opacity-50">&copy; 2026 GSCICC | Developed by <span class="text-yellow-400">Md Samin Ismail Rupom/GSC73</span></p>
+    </div>
+  </footer>
+
+  <script src="firebase-config.js"></script>
+  <script>
+    // Auto-check if ?id= is in URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var preId = urlParams.get('id');
+    if (preId) {
+      document.getElementById('verify-input').value = preId;
+    }
+
+    function verifyCertificate() {
+      var id = document.getElementById('verify-input').value.trim();
+      var resultEl = document.getElementById('verify-result');
+      if (!id) { resultEl.innerHTML = '<p class="text-red-500 text-sm">Certificate ID লিখুন।</p>'; return; }
+
+      resultEl.innerHTML = '<div class="text-center py-6"><div class="animate-spin h-8 w-8 border-4 border-green-700 border-t-transparent rounded-full mx-auto"></div></div>';
+
+      db.collection('certificates').doc(id).get().then(function(doc) {
+        if (!doc.exists) {
+          resultEl.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-lg p-5 text-center">' +
+            '<div class="text-4xl mb-2">❌</div>' +
+            '<p class="font-bold text-red-700">এই সার্টিফিকেট আইডি সঠিক নয়</p>' +
+            '<p class="text-sm text-red-500 mt-1">দয়া করে ID-টি আবার চেক করুন</p></div>';
+          return;
+        }
+        var d = doc.data();
+        var date = d.issuedAt ? new Date(d.issuedAt).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
+        resultEl.innerHTML = '<div class="bg-green-50 border border-green-200 rounded-lg p-5">' +
+          '<div class="text-center mb-4"><div class="text-4xl mb-2">✅</div><p class="font-bold text-green-700">সার্টিফিকেটটি সঠিক ও বৈধ</p></div>' +
+          '<div class="space-y-2 text-sm">' +
+          '<p><strong>নাম:</strong> ' + (d.recipientName || '') + '</p>' +
+          '<p><strong>ইভেন্ট/কারণ:</strong> ' + (d.eventName || '') + '</p>' +
+          (d.scoreText ? '<p><strong>স্কোর:</strong> ' + d.scoreText + '</p>' : '') +
+          '<p><strong>ইস্যুর তারিখ:</strong> ' + date + '</p>' +
+          '</div>' +
+          '<a href="certificate.html?id=' + id + '" target="_blank" class="inline-block mt-4 bg-green-700 text-white px-5 py-2 rounded-lg font-bold text-sm hover:bg-green-600">সার্টিফিকেট দেখুন →</a>' +
+          '</div>';
+      }).catch(function(err) {
+        resultEl.innerHTML = '<p class="text-red-500 text-sm">এরর: ' + err.message + '</p>';
+      });
+    }
+
+    function toggleMenu() {
+      document.getElementById('dropdown').classList.toggle('show');
+    }
+    document.addEventListener('click', function(e) {
+      var dropdown = document.getElementById('dropdown');
+      var button = document.querySelector('.menu-button');
+      if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    var darkToggle = document.getElementById('darkToggle');
+    if (localStorage.getItem('darkMode') === 'true') { document.body.classList.add('dark-mode'); darkToggle.textContent = '☀️'; }
+    darkToggle.addEventListener('click', function() { document.body.classList.toggle('dark-mode'); var isDark = document.body.classList.contains('dark-mode'); darkToggle.textContent = isDark ? '☀️' : '🌙'; localStorage.setItem('darkMode', isDark); });
+    document.querySelectorAll('nav a').forEach(function(l) { if (l.href === window.location.href) l.classList.add('active-page'); });
+  </script>
+</body>
+</html>
