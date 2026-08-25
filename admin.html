@@ -157,7 +157,7 @@
           <button onclick="openTemplateForm()" class="mb-4" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:10px 20px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ নতুন টেমপ্লেট</button>
           <div class="bg-white rounded-xl p-5 shadow overflow-x-auto">
             <table class="data-table">
-              <thead><tr><th>নাম</th><th>ধরন</th><th>টাইটেল টেক্সট</th><th>Actions</th></tr></thead>
+              <thead><tr><th>প্রিভিউ</th><th>নাম</th><th>Actions</th></tr></thead>
               <tbody id="cert-templates-table"></tbody>
             </table>
           </div>
@@ -170,36 +170,6 @@
               <thead><tr><th>Cert ID</th><th>নাম</th><th>ইভেন্ট/কারণ</th><th>তারিখ</th><th>Actions</th></tr></thead>
               <tbody id="cert-issued-table"></tbody>
             </table>
-          </div>
-        </div>
-      </section>
-
-      <section id="section-certificates" class="admin-section hidden">
-        <div class="space-y-6">
-          <div class="bg-white rounded-xl p-5 shadow">
-            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-              <h3 class="font-bold text-lg" style="color:#1a202c">🎨 Certificate Templates</h3>
-              <button onclick="openTemplateForm()" style="background:linear-gradient(135deg,#16a34a,#14532d);color:white;padding:8px 16px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ Add Template</button>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="data-table">
-                <thead><tr><th>Name</th><th>Heading</th><th>Actions</th></tr></thead>
-                <tbody id="templates-table"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl p-5 shadow">
-            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-              <h3 class="font-bold text-lg" style="color:#1a202c">🎓 ইস্যুকৃত সার্টিফিকেট</h3>
-              <button onclick="openIssueCertForm()" style="background:linear-gradient(135deg,#f59e0b,#b45309);color:white;padding:8px 16px;border-radius:8px;font-weight:700;border:none;cursor:pointer">+ ম্যানুয়ালি ইস্যু করুন</button>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="data-table">
-                <thead><tr><th>নাম</th><th>টেমপ্লেট</th><th>ইভেন্ট/কারণ</th><th>তারিখ</th><th>Actions</th></tr></thead>
-                <tbody id="certificates-table"></tbody>
-              </table>
-            </div>
           </div>
         </div>
       </section>
@@ -449,42 +419,6 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="template-modal">
-    <div class="modal-box p-6">
-      <button class="modal-close-btn" onclick="closeFormModal('template')">✕</button>
-      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">🎨 <span id="template-modal-title">Add Template</span></h2>
-      <input type="hidden" id="template-id">
-      <div class="space-y-3">
-        <input type="text" id="template-name" class="gsc-input" placeholder="Template Name * (যেমন: Quiz Certificate)">
-        <input type="text" id="template-heading" class="gsc-input" placeholder="সার্টিফিকেটের শিরোনাম * (যেমন: সার্টিফিকেট অব অ্যাচিভমেন্ট)">
-        <textarea id="template-body" class="gsc-input" rows="4" placeholder="বডি টেক্সট * — {event}, {score}, {date} ব্যবহার করা যাবে।
-যেমন: এই মর্মে প্রত্যয়ন করা যাচ্ছে যে তিনি {event} -এ অংশগ্রহণ করে {score} নম্বর অর্জন করেছেন।"></textarea>
-        <p class="text-xs text-gray-400">প্লেসহোল্ডার: <code>{event}</code> (ইভেন্ট/কুইজের নাম), <code>{score}</code> (স্কোর, থাকলে), <code>{date}</code> (তারিখ)</p>
-        <button onclick="saveTemplate()" id="template-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save Template</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="issuecert-modal">
-    <div class="modal-box p-6">
-      <button class="modal-close-btn" onclick="closeFormModal('issuecert')">✕</button>
-      <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">🎓 ম্যানুয়ালি সার্টিফিকেট ইস্যু করুন</h2>
-      <div class="space-y-3">
-        <select id="issuecert-member" class="gsc-input">
-          <option value="">সদস্য বেছে নিন *</option>
-        </select>
-        <input type="text" id="issuecert-name" class="gsc-input" placeholder="অথবা সরাসরি নাম লিখুন (সদস্য না হলে)">
-        <select id="issuecert-template" class="gsc-input">
-          <option value="">টেমপ্লেট বেছে নিন *</option>
-        </select>
-        <input type="text" id="issuecert-event" class="gsc-input" placeholder="ইভেন্ট/কারণ * (যেমন: বার্ষিক কুইজ প্রতিযোগিতা ২০২৬)">
-        <input type="text" id="issuecert-score" class="gsc-input" placeholder="স্কোর (ঐচ্ছিক, যেমন: 85%)">
-        <input type="date" id="issuecert-date" class="gsc-input">
-        <button onclick="issueCertificate()" id="issuecert-save-btn" class="w-full bg-yellow-500 text-white font-bold py-3 rounded-lg hover:bg-yellow-400">🎓 ইস্যু করুন</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="cert-template-modal">
     <div class="modal-box p-6">
       <button class="modal-close-btn" onclick="closeFormModal('cert-template')">✕</button>
@@ -492,22 +426,34 @@
       <input type="hidden" id="ct-id">
       <div class="space-y-3">
         <input type="text" id="ct-name" class="gsc-input" placeholder="টেমপ্লেটের নাম * (যেমন: Quiz Certificate)">
-        <select id="ct-type" class="gsc-input">
-          <option value="quiz">🧠 Quiz Certificate</option>
-          <option value="event">📅 Event Participation</option>
-          <option value="appreciation">🌟 Appreciation Certificate</option>
-        </select>
-        <input type="text" id="ct-title" class="gsc-input" placeholder="সার্টিফিকেটের টাইটেল * (যেমন: Certificate of Achievement)">
-        <input type="text" id="ct-subtitle" class="gsc-input" placeholder="সাবটাইটেল (যেমন: এই সার্টিফিকেট প্রদান করা হলো)">
-        <textarea id="ct-body" class="gsc-input" rows="3" placeholder="মূল বাক্য * — {{name}}, {{event}}, {{score}} ব্যবহার করুন&#10;যেমন: {{name}} সফলভাবে {{event}} সম্পন্ন করেছেন{{score}}।"></textarea>
-        <div class="flex items-center gap-3">
-          <label class="text-sm font-semibold text-gray-600">থিম রঙ:</label>
-          <input type="color" id="ct-color" value="#16a34a" style="width:50px;height:38px;border:none;cursor:pointer">
+        <div class="flex gap-4 p-3 bg-gray-50 rounded-lg">
+          <label class="flex items-center gap-2 text-sm font-semibold"><input type="radio" name="ct-mode" value="personalized" checked onchange="toggleCtMode('personalized')"> 🖊️ নাম বসবে</label>
+          <label class="flex items-center gap-2 text-sm font-semibold"><input type="radio" name="ct-mode" value="ready" onchange="toggleCtMode('ready')"> 🖼️ সম্পূর্ণ রেডি (নাম ছাড়া)</label>
         </div>
-        <input type="file" id="ct-bg-file" accept="image/*" onchange="handleImageUpload(this, 'ct-bg')" class="gsc-input">
-        <div id="ct-bg-status" class="text-sm hidden"></div>
-        <img id="ct-bg-preview" class="max-h-24 rounded-lg hidden">
-        <input type="hidden" id="ct-bg">
+        <div>
+          <label class="block text-sm font-semibold text-gray-600 mb-1">সার্টিফিকেট ছবি * (তোমার নিজের ডিজাইন করা)</label>
+          <input type="file" id="ct-bg-file" accept="image/*" onchange="handleImageUpload(this, 'ct-bg')" class="gsc-input">
+          <div id="ct-bg-status" class="text-sm hidden"></div>
+          <img id="ct-bg-preview" class="max-h-40 rounded-lg mt-2 hidden">
+          <input type="hidden" id="ct-bg">
+        </div>
+        <div id="ct-personalized-fields">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">নাম কতটা নিচে/উপরে বসবে (%)</label>
+              <input type="number" id="ct-namey" class="gsc-input" min="0" max="100" value="55" placeholder="55">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">নামের ফন্ট সাইজ (px)</label>
+              <input type="number" id="ct-fontsize" class="gsc-input" min="20" max="150" value="60" placeholder="60">
+            </div>
+          </div>
+          <div class="flex items-center gap-3 mt-3">
+            <label class="text-sm font-semibold text-gray-600">নামের রঙ:</label>
+            <input type="color" id="ct-color" value="#16a34a" style="width:50px;height:38px;border:none;cursor:pointer">
+          </div>
+          <p class="text-xs text-gray-400 mt-2">💡 ছবি আপলোড করে Save করার পর "ম্যানুয়ালি ইস্যু" করে টেস্ট করে দেখো নামের পজিশন ঠিক আছে কিনা, প্রয়োজনে % বদলে আবার Save করো।</p>
+        </div>
         <button onclick="saveCertTemplate()" id="ct-save-btn" class="w-full bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-600">💾 Save Template</button>
       </div>
     </div>
@@ -518,10 +464,14 @@
       <button class="modal-close-btn" onclick="closeFormModal('cert-issue')">✕</button>
       <h2 class="text-2xl font-bold mb-4" style="color:#1a202c">📜 ম্যানুয়ালি সার্টিফিকেট ইস্যু করুন</h2>
       <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Certificate ID * (নিজে লিখো, ইউনিক হতে হবে)</label>
+          <input type="text" id="ci-certid" class="gsc-input" placeholder="যেমন: GSCICC-Q1-001">
+        </div>
         <input type="text" id="ci-name" class="gsc-input" placeholder="প্রাপকের নাম *">
-        <input type="text" id="ci-event" class="gsc-input" placeholder="ইভেন্ট/কারণ * (যেমন: Skill Hunt Quiz Competition)">
+        <input type="text" id="ci-event" class="gsc-input" placeholder="ইভেন্ট/কারণ (ঐচ্ছিক, যেমন: Skill Hunt Quiz)">
         <select id="ci-template" class="gsc-input"><option value="">টেমপ্লেট বেছে নিন *</option></select>
-        <input type="text" id="ci-score" class="gsc-input" placeholder="স্কোর/মন্তব্য (ঐচ্ছিক, যেমন: ৯৫%)">
+        <input type="text" id="ci-score" class="gsc-input" placeholder="স্কোর/মন্তব্য (ঐচ্ছিক)">
         <button onclick="issueCertManual()" id="ci-issue-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-500">🎓 ইস্যু করুন</button>
       </div>
     </div>
@@ -607,7 +557,6 @@
       if (section === 'founders') loadFoundersAdmin();
       if (section === 'forms') loadFormsAdmin();
       if (section === 'certificates') { loadCertTemplatesAdmin(); loadIssuedCertsAdmin(); }
-      if (section === 'certificates') loadCertificatesAdmin();
       if (section === 'members') loadMembersAdmin();
       if (section === 'messages') loadConversationsAdmin();
       if (section === 'popup') loadPopupSettings();
@@ -1368,166 +1317,6 @@
       showToast('CSV ডাউনলোড হয়েছে! ✅');
     }
 
-    // ================= CERTIFICATE TEMPLATES =================
-    function openTemplateForm(id) {
-      document.getElementById('template-modal-title').textContent = id ? 'Edit Template' : 'Add Template';
-      document.getElementById('template-id').value = id || '';
-      if (id) {
-        db.collection('certificate_templates').doc(id).get().then(function(doc) {
-          var d = doc.data();
-          document.getElementById('template-name').value = d.name || '';
-          document.getElementById('template-heading').value = d.heading || '';
-          document.getElementById('template-body').value = d.body || '';
-        });
-      } else {
-        document.getElementById('template-name').value = '';
-        document.getElementById('template-heading').value = 'সার্টিফিকেট অব অ্যাচিভমেন্ট';
-        document.getElementById('template-body').value = 'এই মর্মে প্রত্যয়ন করা যাচ্ছে যে তিনি {event} -এ সফলভাবে অংশগ্রহণ করেছেন।';
-      }
-      document.getElementById('template-modal').classList.add('open');
-    }
-
-    function saveTemplate() {
-      var id = document.getElementById('template-id').value;
-      var data = {
-        name: document.getElementById('template-name').value.trim(),
-        heading: document.getElementById('template-heading').value.trim(),
-        body: document.getElementById('template-body').value.trim()
-      };
-      if (!data.name || !data.heading || !data.body) { showToast('সব ফিল্ড পূরণ করুন!', 'error'); return; }
-
-      var btn = document.getElementById('template-save-btn');
-      btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
-
-      var promise = id ? db.collection('certificate_templates').doc(id).update(data) : db.collection('certificate_templates').add(data);
-      promise.then(function() {
-        showToast('Template সেভ হয়েছে! ✅');
-        closeFormModal('template');
-        loadTemplatesAdmin();
-      }).catch(function(err) {
-        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
-      }).finally(function() {
-        btn.disabled = false; btn.textContent = '💾 Save Template';
-      });
-    }
-
-    function loadTemplatesAdmin() {
-      db.collection('certificate_templates').get().then(function(snap) {
-        var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
-          html += '<tr><td>' + d.name + '</td><td>' + d.heading + '</td><td>' +
-            '<button onclick="openTemplateForm(\'' + doc.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button>' +
-            '<button onclick="deleteTemplate(\'' + doc.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
-        });
-        document.getElementById('templates-table').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:24px;color:#9ca3af">কোনো টেমপ্লেট নেই</td></tr>';
-      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
-    }
-
-    function deleteTemplate(id) {
-      if (!confirm('এই টেমপ্লেট মুছে ফেলবেন? যেসব কুইজে এটা যুক্ত আছে সেগুলোতে আর সার্টিফিকেট ইস্যু হবে না।')) return;
-      db.collection('certificate_templates').doc(id).delete().then(function() {
-        showToast('Deleted!');
-        loadTemplatesAdmin();
-      }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
-    }
-
-    // ================= MANUAL CERTIFICATE ISSUE =================
-    function openIssueCertForm() {
-      var memberSel = document.getElementById('issuecert-member');
-      var html = '<option value="">সদস্য বেছে নিন *</option>';
-      (allMembers || []).filter(function(m) { return m.status === 'Active'; }).forEach(function(m) {
-        html += '<option value="' + m.docId + '" data-name="' + escChat(m.fullName || '') + '">' + (m.fullName || m.email) + '</option>';
-      });
-      memberSel.innerHTML = html;
-
-      var tplSel = document.getElementById('issuecert-template');
-      db.collection('certificate_templates').get().then(function(snap) {
-        var th = '<option value="">টেমপ্লেট বেছে নিন *</option>';
-        snap.forEach(function(doc) { th += '<option value="' + doc.id + '">' + doc.data().name + '</option>'; });
-        tplSel.innerHTML = th;
-      });
-
-      document.getElementById('issuecert-name').value = '';
-      document.getElementById('issuecert-event').value = '';
-      document.getElementById('issuecert-score').value = '';
-      document.getElementById('issuecert-date').value = new Date().toISOString().split('T')[0];
-      document.getElementById('issuecert-modal').classList.add('open');
-    }
-
-    function issueCertificate() {
-      var memberSel = document.getElementById('issuecert-member');
-      var selectedOption = memberSel.options[memberSel.selectedIndex];
-      var manualName = document.getElementById('issuecert-name').value.trim();
-      var name = manualName || (selectedOption ? selectedOption.getAttribute('data-name') : '');
-      var templateId = document.getElementById('issuecert-template').value;
-      var event = document.getElementById('issuecert-event').value.trim();
-      var score = document.getElementById('issuecert-score').value.trim();
-      var date = document.getElementById('issuecert-date').value;
-
-      if (!name) { showToast('সদস্য বেছে নিন অথবা নাম লিখুন!', 'error'); return; }
-      if (!templateId) { showToast('টেমপ্লেট বেছে নিন!', 'error'); return; }
-      if (!event) { showToast('ইভেন্ট/কারণ লিখুন!', 'error'); return; }
-
-      var btn = document.getElementById('issuecert-save-btn');
-      btn.disabled = true; btn.textContent = '⏳ ইস্যু হচ্ছে...';
-
-      db.collection('certificate_templates').doc(templateId).get().then(function(tplDoc) {
-        var tpl = tplDoc.data();
-        return db.collection('certificates').add({
-          name: name,
-          templateId: templateId,
-          templateName: tpl.name,
-          heading: tpl.heading,
-          body: tpl.body,
-          event: event,
-          score: score,
-          date: date || new Date().toISOString().split('T')[0],
-          issuedBy: 'admin-manual',
-          createdAt: new Date().toISOString()
-        });
-      }).then(function(docRef) {
-        showToast('🎓 সার্টিফিকেট ইস্যু হয়েছে!');
-        closeFormModal('issuecert');
-        loadCertificatesAdmin();
-        copyCertLinkById(docRef.id);
-      }).catch(function(err) {
-        showToast('❌ ব্যর্থ: ' + err.message, 'error');
-      }).finally(function() {
-        btn.disabled = false; btn.textContent = '🎓 ইস্যু করুন';
-      });
-    }
-
-    function loadCertificatesAdmin() {
-      db.collection('certificates').orderBy('createdAt', 'desc').get().then(function(snap) {
-        var html = '';
-        snap.forEach(function(doc) {
-          var d = doc.data();
-          html += '<tr><td>' + d.name + '</td><td>' + (d.templateName || '') + '</td><td>' + (d.event || '') + '</td><td>' + (d.date || '') + '</td><td style="white-space:nowrap">' +
-            '<button onclick="copyCertLinkById(\'' + doc.id + '\')" style="color:#7c3aed;margin-right:8px" title="Copy Link">🔗</button>' +
-            '<button onclick="deleteCertificate(\'' + doc.id + '\')" style="color:#dc2626" title="Delete">🗑️</button></td></tr>';
-        });
-        document.getElementById('certificates-table').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:24px;color:#9ca3af">এখনো কোনো সার্টিফিকেট ইস্যু হয়নি</td></tr>';
-      }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
-    }
-
-    function copyCertLinkById(id) {
-      var url = window.location.origin + window.location.pathname.replace('admin.html', '') + 'certificate.html?id=' + id;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(function() { showToast('সার্টিফিকেট লিংক কপি হয়েছে! 🔗'); });
-      } else {
-        prompt('লিংক কপি করুন:', url);
-      }
-    }
-
-    function deleteCertificate(id) {
-      if (!confirm('এই সার্টিফিকেট মুছে ফেলবেন?')) return;
-      db.collection('certificates').doc(id).delete().then(function() {
-        showToast('Deleted!');
-        loadCertificatesAdmin();
-      }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
-    }
-
     // ================= CERTIFICATES =================
     function showCertTab(tab) {
       document.getElementById('cert-templates-view').classList.toggle('hidden', tab !== 'templates');
@@ -1536,11 +1325,11 @@
       document.getElementById('cert-tab-issued').classList.toggle('active-tab', tab === 'issued');
     }
 
-    function generateCertId() {
-      return 'GSCICC-' + Date.now().toString(36).toUpperCase() + Math.floor(Math.random() * 900 + 100);
+    function toggleCtMode(mode) {
+      document.getElementById('ct-personalized-fields').classList.toggle('hidden', mode === 'ready');
     }
 
-    // ---- Templates ----
+    // ---- Templates (background image + optional name overlay) ----
     function openTemplateForm(id) {
       document.getElementById('cert-template-modal-title').textContent = id ? 'টেমপ্লেট এডিট করুন' : 'নতুন টেমপ্লেট';
       document.getElementById('ct-id').value = id || '';
@@ -1552,34 +1341,39 @@
         db.collection('certificate_templates').doc(id).get().then(function(doc) {
           var d = doc.data();
           document.getElementById('ct-name').value = d.name || '';
-          document.getElementById('ct-type').value = d.type || 'quiz';
-          document.getElementById('ct-title').value = d.titleText || '';
-          document.getElementById('ct-subtitle').value = d.subtitleText || '';
-          document.getElementById('ct-body').value = d.bodyTemplate || '';
-          document.getElementById('ct-color').value = d.accentColor || '#16a34a';
           document.getElementById('ct-bg').value = d.backgroundImage || '';
+          document.getElementById('ct-namey').value = d.nameY != null ? d.nameY : 55;
+          document.getElementById('ct-fontsize').value = d.fontSize || 60;
+          document.getElementById('ct-color').value = d.accentColor || '#16a34a';
+          var mode = d.mode || 'personalized';
+          document.querySelector('input[name="ct-mode"][value="' + mode + '"]').checked = true;
+          toggleCtMode(mode);
           if (d.backgroundImage) { document.getElementById('ct-bg-preview').src = d.backgroundImage; document.getElementById('ct-bg-preview').classList.remove('hidden'); }
         });
       } else {
-        ['ct-name', 'ct-title', 'ct-subtitle', 'ct-body'].forEach(function(i) { document.getElementById(i).value = ''; });
-        document.getElementById('ct-type').value = 'quiz';
+        document.getElementById('ct-name').value = '';
+        document.getElementById('ct-namey').value = 55;
+        document.getElementById('ct-fontsize').value = 60;
         document.getElementById('ct-color').value = '#16a34a';
+        document.querySelector('input[name="ct-mode"][value="personalized"]').checked = true;
+        toggleCtMode('personalized');
       }
       document.getElementById('cert-template-modal').classList.add('open');
     }
 
     function saveCertTemplate() {
       var id = document.getElementById('ct-id').value;
+      var mode = document.querySelector('input[name="ct-mode"]:checked').value;
       var data = {
         name: document.getElementById('ct-name').value.trim(),
-        type: document.getElementById('ct-type').value,
-        titleText: document.getElementById('ct-title').value.trim(),
-        subtitleText: document.getElementById('ct-subtitle').value.trim(),
-        bodyTemplate: document.getElementById('ct-body').value.trim(),
-        accentColor: document.getElementById('ct-color').value,
-        backgroundImage: document.getElementById('ct-bg').value
+        backgroundImage: document.getElementById('ct-bg').value,
+        mode: mode,
+        nameY: parseInt(document.getElementById('ct-namey').value) || 55,
+        fontSize: parseInt(document.getElementById('ct-fontsize').value) || 60,
+        accentColor: document.getElementById('ct-color').value
       };
-      if (!data.name || !data.titleText || !data.bodyTemplate) { showToast('নাম, টাইটেল ও মূল বাক্য দিন!', 'error'); return; }
+      if (!data.name) { showToast('টেমপ্লেটের নাম দিন!', 'error'); return; }
+      if (!data.backgroundImage) { showToast('ছবি আপলোড করুন!', 'error'); return; }
 
       var btn = document.getElementById('ct-save-btn');
       btn.disabled = true; btn.textContent = '⏳ সেভ হচ্ছে...';
@@ -1602,10 +1396,12 @@
         snap.forEach(function(doc) { var d = doc.data(); d.id = doc.id; items.push(d); });
         var html = '';
         items.forEach(function(d) {
-          html += '<tr><td>' + d.name + '</td><td>' + d.type + '</td><td>' + (d.titleText || '') + '</td>' +
+          var thumb = d.backgroundImage ? '<img src="' + d.backgroundImage + '" style="width:70px;height:50px;object-fit:cover;border-radius:5px">' : '🎓';
+          var modeLabel = d.mode === 'ready' ? '🖼️ রেডি' : '🖊️ নাম বসবে';
+          html += '<tr><td>' + thumb + '</td><td>' + d.name + '<br><span class="text-xs text-gray-400">' + modeLabel + '</span></td>' +
             '<td><button onclick="openTemplateForm(\'' + d.id + '\')" style="color:#2563eb;margin-right:8px">✏️</button><button onclick="deleteCertTemplate(\'' + d.id + '\')" style="color:#dc2626">🗑️</button></td></tr>';
         });
-        document.getElementById('cert-templates-table').innerHTML = html || '<tr><td colspan="4" style="text-align:center;padding:32px;color:#9ca3af">কোনো টেমপ্লেট নেই</td></tr>';
+        document.getElementById('cert-templates-table').innerHTML = html || '<tr><td colspan="3" style="text-align:center;padding:32px;color:#9ca3af">কোনো টেমপ্লেট নেই</td></tr>';
       }).catch(function(err) { showToast('❌ লোড এরর: ' + err.message, 'error'); });
     }
 
@@ -1617,16 +1413,21 @@
       }).catch(function(err) { showToast('❌ ' + err.message, 'error'); });
     }
 
-    // ---- Manual Issue ----
+    // ---- Manual Issue (admin types the Certificate ID directly) ----
+    var ciTemplateModes = {};
+
     function openIssueForm() {
+      document.getElementById('ci-certid').value = '';
       document.getElementById('ci-name').value = '';
       document.getElementById('ci-event').value = '';
       document.getElementById('ci-score').value = '';
+      ciTemplateModes = {};
       var sel = document.getElementById('ci-template');
       sel.innerHTML = '<option value="">লোড হচ্ছে...</option>';
       db.collection('certificate_templates').get().then(function(snap) {
         var html = '<option value="">টেমপ্লেট বেছে নিন *</option>';
         snap.forEach(function(doc) {
+          ciTemplateModes[doc.id] = doc.data().mode || 'personalized';
           html += '<option value="' + doc.id + '">' + doc.data().name + '</option>';
         });
         sel.innerHTML = html;
@@ -1635,29 +1436,35 @@
     }
 
     function issueCertManual() {
+      var certId = document.getElementById('ci-certid').value.trim();
       var name = document.getElementById('ci-name').value.trim();
       var event = document.getElementById('ci-event').value.trim();
       var templateId = document.getElementById('ci-template').value;
       var score = document.getElementById('ci-score').value.trim();
-      if (!name || !event || !templateId) { showToast('নাম, ইভেন্ট ও টেমপ্লেট দিন!', 'error'); return; }
+      var isReady = ciTemplateModes[templateId] === 'ready';
+
+      if (!certId || !templateId) { showToast('Certificate ID ও টেমপ্লেট দিন!', 'error'); return; }
+      if (!isReady && !name) { showToast('নাম দিন!', 'error'); return; }
 
       var btn = document.getElementById('ci-issue-btn');
       btn.disabled = true; btn.textContent = '⏳ ইস্যু হচ্ছে...';
 
-      var certId = generateCertId();
-      db.collection('certificates').doc(certId).set({
-        templateId: templateId,
-        recipientName: name,
-        eventName: event,
-        scoreText: score,
-        issuedAt: new Date().toISOString(),
-        issuedBy: 'admin'
+      db.collection('certificates').doc(certId).get().then(function(existing) {
+        if (existing.exists) { return Promise.reject(new Error('এই Certificate ID আগে থেকেই ব্যবহৃত! অন্য একটা ID দিন।')); }
+        return db.collection('certificates').doc(certId).set({
+          templateId: templateId,
+          recipientName: name,
+          eventName: event,
+          scoreText: score,
+          issuedAt: new Date().toISOString(),
+          issuedBy: 'admin'
+        });
       }).then(function() {
         showToast('সার্টিফিকেট ইস্যু হয়েছে! 🎓');
         closeFormModal('cert-issue');
         loadIssuedCertsAdmin();
       }).catch(function(err) {
-        showToast('❌ ব্যর্থ: ' + err.message, 'error');
+        showToast('❌ ' + err.message, 'error');
       }).finally(function() {
         btn.disabled = false; btn.textContent = '🎓 ইস্যু করুন';
       });
@@ -1955,7 +1762,7 @@
     function closeFormModal(type) {
       document.getElementById(type + '-modal').classList.remove('open');
     }
-
+    
     // ================= IMGBB IMAGE UPLOAD =================
     // Replaces old base64-in-Firestore approach — uploads to ImgBB, stores only the URL.
     function handleImageUpload(input, targetId) {
